@@ -16,7 +16,6 @@ router = APIRouter()
 
 @router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    print(form_data)
     user = authenticate_user(fake_users_db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
@@ -29,7 +28,6 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
         data={"sub": user.username}, expires_delta=access_token_expires
     )
     content = {"access_token": access_token, "token_type": "bearer"}
-    print(access_token)
     response = JSONResponse(content=content)
     response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True)
     return response

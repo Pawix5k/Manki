@@ -26,12 +26,9 @@ class OAuth2PasswordBearerWithCookie(OAuth2):
 
     async def __call__(self, request: Request) -> Optional[str]:
         authorization: str = request.cookies.get("access_token")  #changed to accept access token from httpOnly Cookie
-        print("access_token is",authorization)
 
         scheme, param = get_authorization_scheme_param(authorization)
-        print(scheme, param)
         if not authorization or scheme.lower() != "bearer":
-            print("WRONG")
             if self.auto_error:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
@@ -96,14 +93,12 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 
 async def get_current_user(access_token: Annotated[str, Depends(oauth2_scheme)]):
-    print("GGG")
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid authentication credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        print("in get_current_user")
         payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
