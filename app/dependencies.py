@@ -10,7 +10,7 @@ from passlib.context import CryptContext
 import motor.motor_asyncio
 
 from config import SECRET_KEY, ALGORITHM, MONGODB_URL
-from models import User, TokenData
+from models import User, TokenData, CardUpdateRequests
 
 
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGODB_URL)
@@ -101,4 +101,14 @@ async def get_current_user(access_token: Annotated[str, Depends(oauth2_scheme)])
     if user is None:
         raise credentials_exception
     print(user.id)
-    return user.id
+    return str(user.id)
+
+
+def create_update_query(card_update_requests: CardUpdateRequests) -> dict:
+    to_set = {}
+    array_filters = [{"deckfil._id": card_update_requests.deck_id}]
+    for i, card_update in enumerate(card_update_requests.requests):
+        to_set[f"decks.$[deckfil].cards.$[cardfil{i}].question"] = card_update.new_question
+        to_set[f"decks.$[deckfil].cards.$[cardfil{i}].answer"] = card_update.new_answer
+        array_filters.append({f"cardfil{i}._id": card_update.card_id})
+    return to_set, array_filters

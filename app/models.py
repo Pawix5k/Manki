@@ -89,3 +89,14 @@ class User(BaseModel):
                 "hashed_password": "jdoe@example.com",
             }
         }
+
+
+class CardUpdateRequest(BaseModel):
+    card_id: str
+    new_question: str
+    new_answer: str
+
+
+class CardUpdateRequests(BaseModel):
+    deck_id: str
+    requests: list[CardUpdateRequest]
