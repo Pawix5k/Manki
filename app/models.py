@@ -40,12 +40,10 @@ class TokenData(BaseModel):
     username: str | None = None
 
 
-
-class Deck(BaseModel):
+class Card(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    user_id: str = Field(...)
-    name: str = Field(...)
-    length: int = 0
+    question: str = Field(...)
+    answer: str = Field(...)
 
     class Config:
         allow_population_by_field_name = True
@@ -53,7 +51,23 @@ class Deck(BaseModel):
         json_encoders = {ObjectId: str}
         schema_extra = {
             "example": {
-                "user_id": "644e78bbc2f462dd3a5fe216",
+                "question": "horse",
+                "answer": "kon",
+            }
+        }
+
+
+class Deck(BaseModel):
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    name: str = Field(...)
+    cards: list[Card] = []
+
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        schema_extra = {
+            "example": {
                 "name": "english 101",
             }
         }
@@ -75,15 +89,3 @@ class User(BaseModel):
                 "hashed_password": "jdoe@example.com",
             }
         }
-
-
-class Card(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    deck_id: PyObjectId = Field(...)
-    question: str = Field(...)
-    answer: str = Field(...)
-
-    class Config:
-        allow_population_by_field_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
