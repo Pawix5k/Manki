@@ -47,6 +47,7 @@ async def create_user(user: User = Body(...)):
 
 @router.post("/deck", response_description="Add new deck", response_model=Deck)
 async def create_deck(user_id: Annotated[str, Depends(get_current_user)], deck: Deck = Body(...)):
+    print(deck)
     deck = jsonable_encoder(deck)
     new_deck = await db["users"].update_one({'_id': user_id}, {"$push" : {"decks" : deck} })
     created_deck = await db["users"].find_one({"_id": user_id})
@@ -56,10 +57,8 @@ async def create_deck(user_id: Annotated[str, Depends(get_current_user)], deck: 
 @router.get("/decks", response_description="read decks", response_model=User)
 async def read_own_items(user_id: Annotated[str, Depends(get_current_user)]):
     decks = await db["users"].find_one(user_id)
-    print(decks)
     decks = decks["decks"]
     decks = jsonable_encoder(decks)
-    print(decks)
     return JSONResponse(status_code=200, content=decks)
 
 
