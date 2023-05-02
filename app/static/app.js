@@ -1,12 +1,12 @@
 let appContainer = document.getElementById("app-container");
-console.log(appContainer);
 let rootUrl = "http://127.0.0.1:8000/";
+var decks = undefined;
 
 
-async function get_user_decks() {
+async function getUserDecks() {
     let response = await fetch(rootUrl + "decks");
     if (response.status !== 200) {
-        load_login_page();
+        loadLoginPage();
     }
     else {
         let data2 = await response.json();
@@ -23,17 +23,15 @@ function sendLoginRequest() {
     }
     fetch(rootUrl + 'token', req)
         .then(function (response) {
-            console.log(response.status);
             if (response.status !== 200) {
                 console.log(
                     'Looks like there was a problem. Status Code: ' + response.status
                 );
-                load_login_page();
+                loadLoginPage();
             }
             response.json()
                 .then(function (data) {
-                    console.log(data);
-                    load_home_page();
+                    loadHomePage();
             });
         })
         .catch(function (err) {
@@ -41,7 +39,26 @@ function sendLoginRequest() {
         });
 }
 
-function create_login_form() {
+async function sendCreateDeckRequest() {
+    var deckName = document.getElementById('deck-name-field').value;
+    var data = {name: deckName}
+    data = JSON.stringify(data);
+    var req = {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: data,
+    }
+
+    const response = await fetch(rootUrl + 'deck', req);
+    data = await response.json();
+    console.log(data);
+    loadHomePage();
+}
+
+function createLoginForm() {
     const appContainer = document.getElementById("app-container");
     appContainer.innerHTML = "";
 
@@ -83,25 +100,64 @@ function renderDecks(decks) {
     appContainer.innerHTML = "";
 
     decks.forEach(element => {
-        console.log("smth");
         const deckDiv = document.createElement("div");
         deckDiv.innerHTML = element.name + ", " + element.cards.length + " cards";
         appContainer.appendChild(deckDiv);
     });
 
+    const newDeckButton = document.createElement("button");
+    newDeckButton.setAttribute("id", "add-new-card");
+    newDeckButton.innerHTML = "Add new deck";
+    newDeckButton.addEventListener("click", function (e) {
+        console.log("clicked add new deck");
+        e.preventDefault();
+        renderCreateDeckForm();
+    });
+    appContainer.appendChild(newDeckButton);
 }
-async function load_home_page() {
-    console.log("attempting to load decks");
-    let decks = await get_user_decks();
+
+function renderCreateDeckForm() {
     console.log(decks);
+
+    const appContainer = document.getElementById("app-container");
+    appContainer.innerHTML = "";
+
+    const createDeckForm = document.createElement("form");
+    createDeckForm.setAttribute("id", "create-deck-form");
+
+    const deckNameField = document.createElement("input");
+    deckNameField.setAttribute("type", "text");
+    deckNameField.setAttribute("name", "name");
+    deckNameField.setAttribute("id", "deck-name-field");
+    deckNameField.setAttribute("class", "create-deck-form-field");
+    deckNameField.setAttribute("placeholder", "Deck name");
+
+    const submitButton = document.createElement("input");
+    submitButton.setAttribute("type", "submit");
+    submitButton.setAttribute("value", "Create new deck");
+    submitButton.setAttribute("id", "create-new-deck-form-submit");
+
+    createDeckForm.appendChild(deckNameField);
+    createDeckForm.appendChild(submitButton);
+    createDeckForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        sendCreateDeckRequest();
+    });
+
+    appContainer.appendChild(createDeckForm);
+}
+
+async function loadHomePage() {
+    console.log("attempting to load decks");
+    decks = await getUserDecks();
     if (decks) {
         renderDecks(decks);
     }
 }
 
-function load_login_page() {
+function loadLoginPage() {
     console.log("attempting to load login page");
-    create_login_form();
+    createLoginForm();
 }
 
-load_home_page();
+loadHomePage();
