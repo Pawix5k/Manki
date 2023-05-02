@@ -1,10 +1,8 @@
-from fastapi import APIRouter
-
 
 from datetime import timedelta
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status, Body
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.security import OAuth2PasswordRequestForm

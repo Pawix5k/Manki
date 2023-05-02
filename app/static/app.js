@@ -254,7 +254,26 @@ function renderDecks(decks) {
             console.log("clicked " + deck_id);
             loadCardsLearningPage(deck_id);
         });
+
+        deleteDeckButton = document.createElement("button");
+        deleteDeckButton.setAttribute("type", "button");
+        deleteDeckButton.setAttribute("class", "delete-deck-button");
+        deleteDeckButton.innerHTML = "delete";
+
+        modifyDeckButton = document.createElement("button");
+        modifyDeckButton.setAttribute("type", "button");
+        modifyDeckButton.setAttribute("class", "modify-deck-button");
+        modifyDeckButton.innerHTML = "change deck's name";
+
+        addCardDeckButton = document.createElement("button");
+        addCardDeckButton.setAttribute("type", "button");
+        addCardDeckButton.setAttribute("class", "add-card-deck-button");
+        addCardDeckButton.innerHTML = "add a card";
+
         deckDiv.appendChild(deckDescription);
+        deckDiv.appendChild(deleteDeckButton);
+        deckDiv.appendChild(modifyDeckButton);
+        deckDiv.appendChild(addCardDeckButton);
         appContainer.appendChild(deckDiv);
     }
 
@@ -318,6 +337,7 @@ function renderCreateDeckForm() {
 // }
 
 function renderCardsLearningPage(currentDeck) {
+    enableModal();
     const appContainer = document.getElementById("app-container");
     appContainer.innerHTML = "";
     let backButton = document.createElement("button");
@@ -405,9 +425,11 @@ function renderCardsLearningPage(currentDeck) {
         appContainer.appendChild(wrongButton);
         appContainer.appendChild(correctButton);
     }
+    disableModal();
 }
 
 async function loadHomePage() {
+    enableModal();
     console.log("attempting to load decks");
     if (decks === undefined) {
         decks = await getUserDecks();
@@ -415,19 +437,44 @@ async function loadHomePage() {
     if (decks) {
         renderDecks(decks);
     }
+    disableModal();
 }
 
 function loadLoginPage() {
+    enableModal();
     console.log("attempting to load login page");
     createLoginForm();
+    disableModal();
 }
 
 async function loadCardsLearningPage(deck_id) {
+    enableModal();
     let deckData = await getDeck(deck_id);
+    disableModal();
     let currentDeck = new CurrentDeck(deckData);
     console.log(JSON.stringify(currentDeck));
     renderCardsLearningPage(currentDeck);
 }
+
+// var modal = document.getElementById("modal");
+
+function enableModal() {
+    const dialog = document.querySelector("dialog")
+    if (!dialog.open) {
+        dialog.showModal();
+    }
+}
+
+function disableModal() {
+    const dialog = document.querySelector("dialog")
+    if (dialog.open) {
+        dialog.close();
+    }
+}
+// const dialog = document.querySelector("dialog");
+// dialog.showModal();
+// enableModal();
+
 
 let appContainer = document.getElementById("app-container");
 let rootUrl = "http://127.0.0.1:8000/";
