@@ -44,9 +44,9 @@ class Card(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     question: str = Field(...)
     answer: str = Field(...)
-    new_date: str = "2020-01-01T00:00:00.000Z"
-    new_last_was_wrong: bool = True
-    new_last_interval: int = -1
+    date: str = "2020-01-01T00:00:00.000Z"
+    last_was_wrong: bool = True
+    last_interval: int = -1
 
     class Config:
         allow_population_by_field_name = True
