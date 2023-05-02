@@ -1,6 +1,108 @@
-let appContainer = document.getElementById("app-container");
-let rootUrl = "http://127.0.0.1:8000/";
-var decks = undefined;
+class CardsQueue {
+    constructor() {
+        this.items = {}
+        this.frontIndex = 0
+        this.backIndex = 0
+    }
+    enqueue(item) {
+        this.items[this.backIndex] = item
+        this.backIndex++
+        return item
+    }
+    dequeue() {
+        const item = this.items[this.frontIndex]
+        delete this.items[this.frontIndex]
+        this.frontIndex++
+        return item
+    }
+    peek() {
+        return this.items[this.frontIndex]
+    }
+    get printQueue() {
+        return this.items;
+    }
+}
+
+class CurrentDeck {
+    constructor(deck) {
+        this.deck = deck;
+        this.intervals = [1, 2, 3, 5, 8, 13, 21, 34, 55, 90];
+        this.cardsToLearn = this.buildCardsToLearn();
+        this.updates = {};
+    }
+
+    buildDeckUpdateRequestBody() {
+        let body = {};
+        body["deck_id"] = this.deck._id;
+        let requests = [];
+        for (const [card_id, card] of Object.entries(this.updates)) {
+            let card_body = {};
+            card_body["card_id"] = card_id;
+            card_body["new_question"] = card.question;
+            card_body["new_answer"] = card.answer;
+            card_body["new_date"] = card.date;
+            card_body["new_last_was_wrong"] = card.last_was_wrong;
+            card_body["new_last_interval"] = card.last_interval;
+            requests.push(card_body);
+        }
+        body["requests"] = requests;
+        return JSON.stringify(body)
+    }
+
+    buildCardsToLearn() {
+        var cards = new CardsQueue;
+        const now = Date.now();
+        this.deck.cards.forEach(card => {
+            if (Date.parse(card.date) < now) {
+                cards.enqueue(card);
+            }
+        });
+        return cards
+    }
+
+    getTopCard() {
+        return this.cardsToLearn.peek();
+    }
+
+    correctAnswer() {
+        let currentCard = this.cardsToLearn.dequeue();
+        if (currentCard.last_was_wrong) {
+            currentCard.last_was_wrong = false;
+            this.cardsToLearn.enqueue(currentCard);
+        }
+        else {
+            let now = Date.now();
+            let newIndex = Math.min(currentCard.last_interval + 1, this.intervals.length - 1);
+            var newDate = new Date(now + this.intervals[newIndex] * 24 * 60 * 60 * 1000);
+            currentCard.date = newDate.toJSON();
+            currentCard.last_interval = newIndex;
+        }
+        this.updates[currentCard._id] = currentCard;
+    }
+
+    wrongAnswer() {
+        let currentCard = this.cardsToLearn.dequeue();
+        currentCard.last_was_wrong = true;
+        currentCard.last_interval = -1;
+        this.cardsToLearn.enqueue(currentCard);
+
+        this.updates[currentCard._id] = currentCard;
+    }
+
+    getNextCardsInterval() {
+        if (this.getTopCard().last_was_wrong) {
+            return "<10min"
+        }
+        let index = this.getTopCard().last_interval + 1;
+        index = Math.min(index, this.intervals.length);
+
+        return this.intervals[index] + " days"
+    }
+
+    isQueueEmpty () {
+        return Object.keys(this.cardsToLearn.items).length === 0;
+    }
+}
 
 
 async function getUserDecks() {
@@ -109,15 +211,16 @@ function renderDecks(decks) {
     const appContainer = document.getElementById("app-container");
     appContainer.innerHTML = "";
 
-    // decks.forEach(element => {
-    //     const deckDiv = document.createElement("div");
-    //     deckDiv.innerHTML = element.name + ", " + element.cards.length + " cards";
-    //     appContainer.appendChild(deckDiv);
-    // });
-
     for (const [deck_id, deck] of Object.entries(decks)) {
         const deckDiv = document.createElement("div");
-        deckDiv.innerHTML = deck.name + ", " + deck.cards.length + " cards";
+        const deckDescription = document.createElement("p");
+        deckDescription.innerHTML = deck.name + ", " + deck.cards.length + " cards";
+        deckDescription.addEventListener("click", function (e) {
+            e.preventDefault();
+            console.log("clicked " + deck_id);
+            loadCardsLearningPage(deck_id);
+        });
+        deckDiv.appendChild(deckDescription);
         appContainer.appendChild(deckDiv);
     }
 
@@ -163,6 +266,108 @@ function renderCreateDeckForm() {
     appContainer.appendChild(createDeckForm);
 }
 
+// function renderCardDetail(cardDetail) {
+//     console.log(cardDetail);
+//     let cardDiv = document.createElement("div");
+//     cardDiv.setAttribute("id", "card-detail");
+    
+//     let questionParagraph = document.createElement("p");
+//     questionParagraph.innerHTML = "question: " + cardDetail.question;
+
+//     let answerParagraph = document.createElement("p");
+//     answerParagraph.innerHTML = "answer: " + cardDetail.answer;
+
+//     cardDiv.appendChild(questionParagraph);
+//     cardDiv.appendChild(answerParagraph);
+
+//     return cardDiv
+// }
+
+function renderCardsLearningPage(currentDeck) {
+    const appContainer = document.getElementById("app-container");
+    appContainer.innerHTML = "";
+    let backButton = document.createElement("button");
+    backButton.setAttribute("type", "button");
+    backButton.innerHTML = "go back";
+    backButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        loadHomePage();
+    });
+
+    let cardsInterface = document.createElement("div");
+    cardsInterface.setAttribute("id", "cards-interface");
+
+    appContainer.appendChild(backButton);
+    appContainer.appendChild(cardsInterface);
+
+
+
+    if (currentDeck.isQueueEmpty()) {
+        cardsInterface.innerHTML = "";
+        let cardDiv = document.createElement("div");
+        cardDiv.innerHTML = "No cards to learn today!";
+
+        cardsInterface.appendChild(cardDiv);
+    }
+    else {
+        cardsInterface.innerHTML = "";
+
+        let topCard = currentDeck.getTopCard();
+        let question = topCard.question;
+        let answer = topCard.answer;
+        let intervalTime = currentDeck.getNextCardsInterval();
+
+        let questionParagraph = document.createElement("p");
+        questionParagraph.innerHTML = "question: " + question;
+        questionParagraph.setAttribute("id", "question");
+
+        let answerParagraph = document.createElement("p");
+        answerParagraph.innerHTML = "answer: " + answer;
+        answerParagraph.setAttribute("id", "answer");
+        answerParagraph.style.visibility = "hidden";
+
+        let showButton = document.createElement("button");
+        showButton.setAttribute("type", "button");
+        showButton.setAttribute("id", "show-button");
+        showButton.innerHTML = "show";
+        showButton.addEventListener("click", function (e) {
+            e.preventDefault();
+            this.style.visibility = "hidden";
+            document.getElementById("wrong-button").style.visibility = "visible";
+            document.getElementById("correct-button").style.visibility = "visible";
+            answerParagraph.style.visibility = "visible";
+        });
+
+        let wrongButton = document.createElement("button");
+        wrongButton.setAttribute("type", "button");
+        wrongButton.setAttribute("id", "wrong-button");
+        wrongButton.style.visibility = "hidden";
+        wrongButton.innerHTML = "wrong";
+        wrongButton.addEventListener("click", function (e) {
+            e.preventDefault();
+            currentDeck.wrongAnswer();
+            renderCardsLearningPage(currentDeck);
+        });
+        
+        let correctButton = document.createElement("button");
+        correctButton.setAttribute("type", "button");
+        correctButton.setAttribute("id", "correct-button");
+        correctButton.style.visibility = "hidden";
+        correctButton.innerHTML = "correct (" + intervalTime + ")";
+        correctButton.addEventListener("click", function (e) {
+            e.preventDefault();
+            currentDeck.correctAnswer();
+            renderCardsLearningPage(currentDeck);
+        });
+        
+        appContainer.appendChild(questionParagraph);
+        appContainer.appendChild(answerParagraph);
+        appContainer.appendChild(showButton);
+        appContainer.appendChild(wrongButton);
+        appContainer.appendChild(correctButton);
+    }
+}
+
 async function loadHomePage() {
     console.log("attempting to load decks");
     if (decks === undefined) {
@@ -177,5 +382,15 @@ function loadLoginPage() {
     console.log("attempting to load login page");
     createLoginForm();
 }
+
+function loadCardsLearningPage(deck_id) {
+    let currentDeck = new CurrentDeck(decks[deck_id]);
+    console.log(JSON.stringify(currentDeck));
+    renderCardsLearningPage(currentDeck);
+}
+
+let appContainer = document.getElementById("app-container");
+let rootUrl = "http://127.0.0.1:8000/";
+var decks = undefined;
 
 loadHomePage();
