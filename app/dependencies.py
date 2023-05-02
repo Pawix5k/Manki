@@ -110,5 +110,8 @@ def create_update_query(card_update_requests: CardUpdateRequests) -> dict:
     for i, card_update in enumerate(card_update_requests.requests):
         to_set[f"decks.$[deckfil].cards.$[cardfil{i}].question"] = card_update.new_question
         to_set[f"decks.$[deckfil].cards.$[cardfil{i}].answer"] = card_update.new_answer
+        to_set[f"decks.$[deckfil].cards.$[cardfil{i}].date"] = card_update.new_date
+        to_set[f"decks.$[deckfil].cards.$[cardfil{i}].last_was_wrong"] = card_update.new_last_was_wrong
+        to_set[f"decks.$[deckfil].cards.$[cardfil{i}].last_interval"] = card_update.new_last_interval
         array_filters.append({f"cardfil{i}._id": card_update.card_id})
     return to_set, array_filters

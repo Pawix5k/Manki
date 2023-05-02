@@ -87,7 +87,7 @@ async def create_card(user_id: Annotated[str, Depends(get_current_user)], deck_i
     return JSONResponse(status_code=201, content=updated_user)
 
 
-@router.post("/deck_update/", response_description="Update cards in deck")
+@router.post("/deck_update", response_description="Update cards in deck")
 async def update_deck(user_id: Annotated[str, Depends(get_current_user)], update_dicts: Annotated[tuple, Depends(create_update_query)]):
     to_set, array_filters = update_dicts
     print(to_set)

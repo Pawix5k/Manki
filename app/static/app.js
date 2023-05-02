@@ -102,6 +102,10 @@ class CurrentDeck {
     isQueueEmpty () {
         return Object.keys(this.cardsToLearn.items).length === 0;
     }
+
+    isUpdatesEmpty () {
+        return Object.keys(this.updates).length === 0;
+    }
 }
 
 
@@ -182,6 +186,21 @@ async function getDeck(deck_id) {
     const response = await fetch(rootUrl + "deck/" + deck_id, req);
     const deckData = await response.json();
     return deckData
+}
+
+async function sendDeckUpdates(updates) {
+    var req = {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: updates,
+    }
+
+    const response = await fetch(rootUrl + 'deck_update', req);
+    data = await response.json();
+    return data
 }
 
 function createLoginForm() {
@@ -304,8 +323,13 @@ function renderCardsLearningPage(currentDeck) {
     let backButton = document.createElement("button");
     backButton.setAttribute("type", "button");
     backButton.innerHTML = "go back";
-    backButton.addEventListener("click", function (e) {
+    backButton.addEventListener("click", async function (e) {
+        console.log(currentDeck.updates);
+        console.log(currentDeck.buildDeckUpdateRequestBody());
         e.preventDefault();
+        if (!currentDeck.isUpdatesEmpty()) {
+            await sendDeckUpdates(currentDeck.buildDeckUpdateRequestBody());
+        }
         loadHomePage();
     });
 
