@@ -203,6 +203,19 @@ async function sendDeckUpdates(updates) {
     return data
 }
 
+async function deleteDeck(deck_id) {
+    var req = {
+        method: "DELETE",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    }
+
+    const response = await fetch(rootUrl + 'deck/' + deck_id, req);
+    return response
+}
+
 function createLoginForm() {
     const appContainer = document.getElementById("app-container");
     appContainer.innerHTML = "";
@@ -240,6 +253,49 @@ function createLoginForm() {
     appContainer.appendChild(loginForm);
 }
 
+function renderConfirmDeleteDialog(deck_id, msg) {
+    let dialog = document.getElementById("confirm-delete-dialog");
+    dialog.open = true;
+
+    let confirmDeleteDialog = document.getElementById("confirm-delete-dialog");
+    confirmDeleteDialog.innerHTML = "";
+
+    let header = document.createElement("h2");
+    header.innerHTML = msg;
+
+    let buttonsDiv = document.createElement("div");
+
+    let closeDialogButton = document.createElement("button");
+    closeDialogButton.setAttribute("id", "close-dialog");
+    closeDialogButton.innerHTML = "back";
+
+    let confirmDialogButton = document.createElement("button");
+    confirmDialogButton.setAttribute("id", "confirm-dialog");
+    confirmDialogButton.innerHTML = "confirm";
+
+    closeDialogButton.addEventListener("click", function(e) {
+        console.log("BACK");
+        e.preventDefault();
+        // let dialog = document.getElementById("confirm-delete-dialog");
+        dialog.open = false;
+    });
+    confirmDialogButton.addEventListener("click", async function(e) {
+        console.log("CONFIRM");
+        e.preventDefault();
+        enableModal();
+        await deleteDeck(deck_id);
+        disableModal();
+        dialog.open = false;
+        loadHomePage();
+    });
+
+    buttonsDiv.appendChild(closeDialogButton);
+    buttonsDiv.appendChild(confirmDialogButton);
+
+    confirmDeleteDialog.appendChild(header);
+    confirmDeleteDialog.appendChild(buttonsDiv);
+}
+
 function renderDecks(decks) {
     const appContainer = document.getElementById("app-container");
     appContainer.innerHTML = "";
@@ -261,8 +317,7 @@ function renderDecks(decks) {
         deleteDeckButton.innerHTML = "delete";
         deleteDeckButton.addEventListener("click", function (e) {
             e.preventDefault();
-            dialog = document.getElementById("confirm-delete-dialog");
-            dialog.open = true;
+            renderConfirmDeleteDialog(deck_id, "Confirm delete deck");
         });
 
         modifyDeckButton = document.createElement("button");
@@ -323,23 +378,6 @@ function renderCreateDeckForm() {
 
     appContainer.appendChild(createDeckForm);
 }
-
-// function renderCardDetail(cardDetail) {
-//     console.log(cardDetail);
-//     let cardDiv = document.createElement("div");
-//     cardDiv.setAttribute("id", "card-detail");
-    
-//     let questionParagraph = document.createElement("p");
-//     questionParagraph.innerHTML = "question: " + cardDetail.question;
-
-//     let answerParagraph = document.createElement("p");
-//     answerParagraph.innerHTML = "answer: " + cardDetail.answer;
-
-//     cardDiv.appendChild(questionParagraph);
-//     cardDiv.appendChild(answerParagraph);
-
-//     return cardDiv
-// }
 
 function renderCardsLearningPage(currentDeck) {
     enableModal();
@@ -475,18 +513,18 @@ function disableModal() {
     }
 }
 
-const openDialog = () => {
-    dialog.showModal();
-  };
+// const openDialog = () => {
+//     dialog.showModal();
+//   };
   
-const closeDialog = (e) => {
-    e.preventDefault();
-    dialog.close();
-};
-const openDialogBtn = document.getElementById("close_dialog");
-const closeDialogBtn = document.getElementById("confirm_dialog");
-openDialogBtn.addEventListener("click", openDialog);
-closeDialogBtn.addEventListener("click", closeDialog);
+// const closeDialog = (e) => {
+//     e.preventDefault();
+//     dialog.close();
+// };
+// const openDialogBtn = document.getElementById("close_dialog");
+// const closeDialogBtn = document.getElementById("confirm_dialog");
+// openDialogBtn.addEventListener("click", openDialog);
+// closeDialogBtn.addEventListener("click", closeDialog);
 // const dialog = document.querySelector("dialog");
 // dialog.showModal();
 // enableModal();

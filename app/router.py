@@ -4,7 +4,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status, Body
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse, FileResponse, Response
 from fastapi.security import OAuth2PasswordRequestForm
 
 from config import ACCESS_TOKEN_EXPIRE_MINUTES
@@ -41,6 +41,14 @@ async def create_user(user: User = Body(...)):
     print(type(new_user.inserted_id))
     created_user = await db["users"].find_one({"_id": new_user.inserted_id})
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_user)
+
+
+@router.delete("/deck/{deck_id}")
+async def delete_deck(user_id: Annotated[str, Depends(get_current_user)], deck_id: str):
+    result = await db["users"].update_one({"_id": user_id}, {"$pull": {"decks": {"_id": deck_id}}})
+    if result.modified_count == 1:
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    raise HTTPException(status_code=404, detail=f"Deck {deck_id} not found")
 
 
 @router.get("/deck/{deck_id}")
