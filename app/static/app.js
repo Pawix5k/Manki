@@ -259,6 +259,11 @@ function renderDecks(decks) {
         deleteDeckButton.setAttribute("type", "button");
         deleteDeckButton.setAttribute("class", "delete-deck-button");
         deleteDeckButton.innerHTML = "delete";
+        deleteDeckButton.addEventListener("click", function (e) {
+            e.preventDefault();
+            dialog = document.getElementById("confirm-delete-dialog");
+            dialog.open = true;
+        });
 
         modifyDeckButton = document.createElement("button");
         modifyDeckButton.setAttribute("type", "button");
@@ -429,15 +434,13 @@ function renderCardsLearningPage(currentDeck) {
 }
 
 async function loadHomePage() {
-    enableModal();
     console.log("attempting to load decks");
-    if (decks === undefined) {
-        decks = await getUserDecks();
-    }
+    enableModal();
+    decks = await getUserDecks();
+    disableModal();
     if (decks) {
         renderDecks(decks);
     }
-    disableModal();
 }
 
 function loadLoginPage() {
@@ -459,18 +462,31 @@ async function loadCardsLearningPage(deck_id) {
 // var modal = document.getElementById("modal");
 
 function enableModal() {
-    const dialog = document.querySelector("dialog")
+    const dialog = document.getElementById("waiting-modal");
     if (!dialog.open) {
         dialog.showModal();
     }
 }
 
 function disableModal() {
-    const dialog = document.querySelector("dialog")
+    const dialog = document.getElementById("waiting-modal");
     if (dialog.open) {
         dialog.close();
     }
 }
+
+const openDialog = () => {
+    dialog.showModal();
+  };
+  
+const closeDialog = (e) => {
+    e.preventDefault();
+    dialog.close();
+};
+const openDialogBtn = document.getElementById("close_dialog");
+const closeDialogBtn = document.getElementById("confirm_dialog");
+openDialogBtn.addEventListener("click", openDialog);
+closeDialogBtn.addEventListener("click", closeDialog);
 // const dialog = document.querySelector("dialog");
 // dialog.showModal();
 // enableModal();

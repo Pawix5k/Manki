@@ -5,7 +5,14 @@
         <link rel="icon" href="static/manki_logo.svg">
     </head>
     <body>
-        <dialog>
+        <dialog id="confirm-delete-dialog">
+            <h2 id="dialog_title" class="h2">Sure want to delete?</h2>
+            <div>
+              <button id="close_dialog">Back</button>
+              <button id="confirm_dialog" class="cta">Delete</button>
+            </div>
+        </dialog>
+        <dialog id="waiting-modal">
             <img src="static/manki_logo.svg" alt="Manki" width="100" class="rotate"/>
         </dialog>
         <img src="static/manki_logo.svg" alt="Manki" width="300"/>
