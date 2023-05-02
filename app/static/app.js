@@ -9,8 +9,13 @@ async function getUserDecks() {
         loadLoginPage();
     }
     else {
-        let data2 = await response.json();
-        return data2
+        let data = await response.json();
+        console.log(data);
+        let newDecks = {}
+        data.forEach(deck => {
+            newDecks[deck._id] = deck;
+        });
+        return newDecks
     }
 }
 
@@ -54,6 +59,11 @@ async function sendCreateDeckRequest() {
 
     const response = await fetch(rootUrl + 'deck', req);
     data = await response.json();
+    let newDecks = {}
+    data.decks.forEach(deck => {
+        newDecks[deck._id] = deck;
+    });
+    decks = newDecks;
     console.log(data);
     loadHomePage();
 }
@@ -99,11 +109,17 @@ function renderDecks(decks) {
     const appContainer = document.getElementById("app-container");
     appContainer.innerHTML = "";
 
-    decks.forEach(element => {
+    // decks.forEach(element => {
+    //     const deckDiv = document.createElement("div");
+    //     deckDiv.innerHTML = element.name + ", " + element.cards.length + " cards";
+    //     appContainer.appendChild(deckDiv);
+    // });
+
+    for (const [deck_id, deck] of Object.entries(decks)) {
         const deckDiv = document.createElement("div");
-        deckDiv.innerHTML = element.name + ", " + element.cards.length + " cards";
+        deckDiv.innerHTML = deck.name + ", " + deck.cards.length + " cards";
         appContainer.appendChild(deckDiv);
-    });
+    }
 
     const newDeckButton = document.createElement("button");
     newDeckButton.setAttribute("id", "add-new-card");
@@ -149,7 +165,9 @@ function renderCreateDeckForm() {
 
 async function loadHomePage() {
     console.log("attempting to load decks");
-    decks = await getUserDecks();
+    if (decks === undefined) {
+        decks = await getUserDecks();
+    }
     if (decks) {
         renderDecks(decks);
     }
