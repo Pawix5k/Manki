@@ -93,6 +93,27 @@ async def create_card(user_id: Annotated[str, Depends(get_current_user)], deck_i
     return JSONResponse(status_code=201, content=updated_user)
 
 
+@router.delete("/card/{card_id}", response_description="Delete card")
+async def delete_card(user_id: Annotated[str, Depends(get_current_user)], card_id: str):
+    result = await db["users"].update_one(
+        {
+            "_id": user_id,
+            "decks.cards._id": card_id
+        },
+        {
+            "$pull":
+            {
+                "decks.$.cards": {
+                "_id": card_id
+            }
+        }
+    })
+
+    if result.modified_count == 1:
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    raise HTTPException(status_code=404, detail=f"Deck {card_id} not found")
+
+
 @router.post("/deck_update", response_description="Update cards in deck")
 async def update_deck(user_id: Annotated[str, Depends(get_current_user)], update_dicts: Annotated[tuple, Depends(create_update_query)]):
     to_set, array_filters = update_dicts
