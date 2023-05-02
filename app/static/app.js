@@ -170,6 +170,20 @@ async function sendCreateDeckRequest() {
     loadHomePage();
 }
 
+async function getDeck(deck_id) {
+    var req = {
+        method: "GET",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    }
+
+    const response = await fetch(rootUrl + "deck/" + deck_id, req);
+    const deckData = await response.json();
+    return deckData
+}
+
 function createLoginForm() {
     const appContainer = document.getElementById("app-container");
     appContainer.innerHTML = "";
@@ -214,7 +228,8 @@ function renderDecks(decks) {
     for (const [deck_id, deck] of Object.entries(decks)) {
         const deckDiv = document.createElement("div");
         const deckDescription = document.createElement("p");
-        deckDescription.innerHTML = deck.name + ", " + deck.cards.length + " cards";
+        deckDescription.innerHTML = deck.name;
+        deckDescription.style.fontWeight = "bold";
         deckDescription.addEventListener("click", function (e) {
             e.preventDefault();
             console.log("clicked " + deck_id);
@@ -383,8 +398,9 @@ function loadLoginPage() {
     createLoginForm();
 }
 
-function loadCardsLearningPage(deck_id) {
-    let currentDeck = new CurrentDeck(decks[deck_id]);
+async function loadCardsLearningPage(deck_id) {
+    let deckData = await getDeck(deck_id);
+    let currentDeck = new CurrentDeck(deckData);
     console.log(JSON.stringify(currentDeck));
     renderCardsLearningPage(currentDeck);
 }

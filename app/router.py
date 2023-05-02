@@ -69,7 +69,8 @@ async def create_deck(user_id: Annotated[str, Depends(get_current_user)], deck: 
 
 @router.get("/decks", response_description="read decks", response_model=User)
 async def read_own_items(user_id: Annotated[str, Depends(get_current_user)]):
-    decks = await db["users"].find_one(user_id)
+    # decks = await db["users"].find_one(user_id)
+    decks = await db["users"].find_one({"_id": user_id}, {"decks._id": 1, "decks.name": 1})
     decks = decks["decks"]
     decks = jsonable_encoder(decks)
     return JSONResponse(status_code=200, content=decks)
