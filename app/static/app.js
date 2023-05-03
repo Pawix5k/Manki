@@ -379,6 +379,14 @@ function renderCreateDeckForm() {
     const appContainer = document.getElementById("app-container");
     appContainer.innerHTML = "";
 
+    let backButton = document.createElement("button");
+    backButton.setAttribute("type", "button");
+    backButton.innerHTML = "go back";
+    backButton.addEventListener("click", async function (e) {
+        e.preventDefault();
+        loadHomePage();
+    });
+
     const createDeckForm = document.createElement("form");
     createDeckForm.setAttribute("id", "create-deck-form");
 
@@ -401,6 +409,7 @@ function renderCreateDeckForm() {
         sendCreateDeckRequest();
     });
 
+    appContainer.appendChild(backButton);
     appContainer.appendChild(createDeckForm);
 }
 
