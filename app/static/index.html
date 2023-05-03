@@ -1,26 +1,47 @@
 <html>
-    <head>
-        <title>Manki</title>
-        <link rel="stylesheet" type="text/css" href="static/styles.css" />
-        <link rel="icon" href="static/manki_logo.svg">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
-    </head>
-    <body>
-        <dialog id="confirm-delete-dialog">
-            <h2 id="dialog-title" class="h2">Sure want to delete?</h2>
+
+<head>
+    <title>Manki</title>
+    <link rel="stylesheet" type="text/css" href="static/styles.css" />
+    <link rel="icon" href="static/manki_logo.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+</head>
+
+<body>
+
+    <div class="grid-container">
+        <header>
             <div>
-              <button id="close-dialog">Back</button>
-              <button id="confirm-dialog">Delete</button>
+
             </div>
+            <div class="info">
+                <img src="static/manki_logo.svg">
+                <p>Manki</p>
+            </div>
+            <div class="logout">
+                <span class="material-symbols-outlined size-48" style="font-size:36px;">logout</span>
+                <p>logout</p>
+            </div>
+        </header>
+        <dialog id="confirm-delete-dialog">
+            <!-- <h2 id="dialog-title" class="h2">Sure want to delete?</h2>
+            <div>
+                <button id="close-dialog">Back</button>
+                <button id="confirm-dialog">Delete</button>
+            </div> -->
         </dialog>
         <dialog id="waiting-modal">
-            <img src="static/manki_logo.svg" alt="Manki" width="100" class="rotate"/>
+            <img src="static/manki_logo.svg" alt="Manki" width="100" class="rotate" />
         </dialog>
-        <img src="static/manki_logo.svg" alt="Manki" width="300"/>
         <div id="app-container">
         </div>
-    </body>
-    <script src="static/app.js"></script>
+    </div>
+
+</body>
+<script src="static/app.js"></script>
+
 </html>

@@ -321,48 +321,79 @@ function renderConfirmDeleteDialog(deck_id, msg) {
     confirmDeleteDialog.appendChild(buttonsDiv);
 }
 
+function createDeckDiv(symbol, text) {
+    let div = document.createElement("div");
+    let iconDiv = document.createElement("div");
+    let span = document.createElement("span");
+    span.setAttribute("class", "material-symbols-outlined size-48");
+    span.setAttribute("style", "font-size:36px;");
+    span.innerHTML = symbol
+    let textDiv = document.createElement("div");
+    textDiv.innerHTML = text;
+    iconDiv.appendChild(span);
+    div.appendChild(iconDiv);
+    div.appendChild(textDiv);
+    
+    return div
+}
+
+function createDeckContainer(deckData) {
+    let deckContainer = document.createElement("div");
+    deckContainer.setAttribute("class", "deck-container");
+
+    let deck = document.createElement("div");
+    deck.setAttribute("class", "deck");
+
+    let deckTop = document.createElement("div");
+    deckTop.setAttribute("class", "deck-top clickable");
+    deckTop.addEventListener("click", function (e) {
+        e.preventDefault();
+        loadCardsLearningPage(deckData["_id"]);
+    });
+
+    let p = document.createElement("p");
+    p.innerHTML = deckData["name"];
+
+    deckTop.appendChild(p);
+
+    let deckBottom = document.createElement("div");
+    deckBottom.setAttribute("class", "deck-bottom");
+
+    let deleteDeckDiv = createDeckDiv("delete", "delete deck");
+    deleteDeckDiv.setAttribute("class", "clickable");
+    deleteDeckDiv.addEventListener("click", function (e) {
+        e.preventDefault();
+        console.log("dd")
+        renderConfirmDeleteDialog(deckData["_id"], "Confirm delete deck");
+    });
+
+    let addCardsDiv = createDeckDiv("add", "add cards");
+    addCardsDiv.setAttribute("class", "clickable");
+    addCardsDiv.addEventListener("click", function (e) {
+        e.preventDefault();
+        renderCreateCardForm(deckData["_id"]);
+    });
+
+    deckBottom.appendChild(deleteDeckDiv);
+    deckBottom.appendChild(addCardsDiv);
+
+    deck.appendChild(deckTop);
+    deck.appendChild(deckBottom);
+
+    deckContainer.appendChild(deck);
+
+    return deckContainer
+}
+
 function renderDecks(decks) {
     const appContainer = document.getElementById("app-container");
     appContainer.innerHTML = "";
 
     for (const [deck_id, deck] of Object.entries(decks)) {
-        const deckDiv = document.createElement("div");
-        const deckDescription = document.createElement("p");
-        deckDescription.innerHTML = deck.name;
-        deckDescription.style.fontWeight = "bold";
-        deckDescription.addEventListener("click", function (e) {
-            e.preventDefault();
-            console.log("clicked " + deck_id);
-            loadCardsLearningPage(deck_id);
-        });
-
-        let deleteDeckButton = document.createElement("button");
-        deleteDeckButton.setAttribute("type", "button");
-        deleteDeckButton.setAttribute("class", "delete-deck-button");
-        deleteDeckButton.innerHTML = "delete";
-        deleteDeckButton.addEventListener("click", function (e) {
-            e.preventDefault();
-            renderConfirmDeleteDialog(deck_id, "Confirm delete deck");
-        });
-
-        let addCardDeckButton = document.createElement("button");
-        addCardDeckButton.setAttribute("type", "button");
-        addCardDeckButton.setAttribute("class", "add-card-deck-button");
-        addCardDeckButton.innerHTML = "add a card";
-        addCardDeckButton.addEventListener("click", function (e) {
-            console.log("dd");
-            e.preventDefault();
-            renderCreateCardForm(deck_id);
-        });
-
-
-        deckDiv.appendChild(deckDescription);
-        deckDiv.appendChild(deleteDeckButton);
-        deckDiv.appendChild(addCardDeckButton);
-        appContainer.appendChild(deckDiv);
+        appContainer.append(createDeckContainer(deck));
     }
 
-    const newDeckButton = document.createElement("button");
+    let newDeckButton = document.createElement("button");
     newDeckButton.setAttribute("id", "add-new-card");
     newDeckButton.innerHTML = "Add new deck";
     newDeckButton.addEventListener("click", function (e) {
@@ -372,6 +403,58 @@ function renderDecks(decks) {
     });
     appContainer.appendChild(newDeckButton);
 }
+
+// function renderDecks(decks) {
+//     const appContainer = document.getElementById("app-container");
+//     appContainer.innerHTML = "";
+
+//     for (const [deck_id, deck] of Object.entries(decks)) {
+//         const deckDiv = document.createElement("div");
+//         const deckDescription = document.createElement("p");
+//         deckDescription.innerHTML = deck.name;
+//         deckDescription.style.fontWeight = "bold";
+//         deckDescription.addEventListener("click", function (e) {
+//             e.preventDefault();
+//             console.log("clicked " + deck_id);
+//             loadCardsLearningPage(deck_id);
+//         });
+
+//         let deleteDeckButton = document.createElement("button");
+//         deleteDeckButton.setAttribute("type", "button");
+//         deleteDeckButton.setAttribute("class", "delete-deck-button");
+//         deleteDeckButton.innerHTML = "delete";
+//         deleteDeckButton.addEventListener("click", function (e) {
+//             e.preventDefault();
+//             renderConfirmDeleteDialog(deck_id, "Confirm delete deck");
+//         });
+
+//         let addCardDeckButton = document.createElement("button");
+//         addCardDeckButton.setAttribute("type", "button");
+//         addCardDeckButton.setAttribute("class", "add-card-deck-button");
+//         addCardDeckButton.innerHTML = "add a card";
+//         addCardDeckButton.addEventListener("click", function (e) {
+//             console.log("dd");
+//             e.preventDefault();
+//             renderCreateCardForm(deck_id);
+//         });
+
+
+//         deckDiv.appendChild(deckDescription);
+//         deckDiv.appendChild(deleteDeckButton);
+//         deckDiv.appendChild(addCardDeckButton);
+//         appContainer.appendChild(deckDiv);
+//     }
+
+//     const newDeckButton = document.createElement("button");
+//     newDeckButton.setAttribute("id", "add-new-card");
+//     newDeckButton.innerHTML = "Add new deck";
+//     newDeckButton.addEventListener("click", function (e) {
+//         console.log("clicked add new deck");
+//         e.preventDefault();
+//         renderCreateDeckForm();
+//     });
+//     appContainer.appendChild(newDeckButton);
+// }
 
 function renderCreateDeckForm() {
     console.log(decks);
