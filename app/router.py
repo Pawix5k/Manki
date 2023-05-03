@@ -89,8 +89,7 @@ async def create_card(user_id: Annotated[str, Depends(get_current_user)], deck_i
     update = {"$push": {"decks.$[deck].cards": card}}
     arr_fil = [{"deck._id": deck_id}]
     updated_user = await db["users"].update_one(fil, update, array_filters=arr_fil)
-    updated_user = await db["users"].find_one({"_id": user_id})
-    return JSONResponse(status_code=201, content=updated_user)
+    return Response(status_code=201)
 
 
 @router.delete("/card/{card_id}", response_description="Delete card")
