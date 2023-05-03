@@ -174,6 +174,31 @@ async function sendCreateDeckRequest() {
     loadHomePage();
 }
 
+async function sendCreateCardRequest(deck_id) {
+    var question = document.getElementById('card-question-field').value;
+    var answer = document.getElementById('card-answer-field').value;
+    var data = {"question": question, "answer": answer}
+    data = JSON.stringify(data);
+    var req = {
+        method: "POST",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: data,
+    }
+
+    const response = await fetch(rootUrl + 'card/' + deck_id, req);
+    data = await response.json();
+    // let newDecks = {}
+    // data.decks.forEach(deck => {
+    //     newDecks[deck._id] = deck;
+    // });
+    // decks = newDecks;
+    // console.log(data);
+    // loadHomePage();
+}
+
 async function getDeck(deck_id) {
     var req = {
         method: "GET",
@@ -311,7 +336,7 @@ function renderDecks(decks) {
             loadCardsLearningPage(deck_id);
         });
 
-        deleteDeckButton = document.createElement("button");
+        let deleteDeckButton = document.createElement("button");
         deleteDeckButton.setAttribute("type", "button");
         deleteDeckButton.setAttribute("class", "delete-deck-button");
         deleteDeckButton.innerHTML = "delete";
@@ -320,19 +345,19 @@ function renderDecks(decks) {
             renderConfirmDeleteDialog(deck_id, "Confirm delete deck");
         });
 
-        modifyDeckButton = document.createElement("button");
-        modifyDeckButton.setAttribute("type", "button");
-        modifyDeckButton.setAttribute("class", "modify-deck-button");
-        modifyDeckButton.innerHTML = "change deck's name";
-
-        addCardDeckButton = document.createElement("button");
+        let addCardDeckButton = document.createElement("button");
         addCardDeckButton.setAttribute("type", "button");
         addCardDeckButton.setAttribute("class", "add-card-deck-button");
         addCardDeckButton.innerHTML = "add a card";
+        addCardDeckButton.addEventListener("click", function (e) {
+            console.log("dd");
+            e.preventDefault();
+            renderCreateCardForm(deck_id);
+        });
+
 
         deckDiv.appendChild(deckDescription);
         deckDiv.appendChild(deleteDeckButton);
-        deckDiv.appendChild(modifyDeckButton);
         deckDiv.appendChild(addCardDeckButton);
         appContainer.appendChild(deckDiv);
     }
@@ -377,6 +402,54 @@ function renderCreateDeckForm() {
     });
 
     appContainer.appendChild(createDeckForm);
+}
+
+function renderCreateCardForm(deck_id) {
+    const appContainer = document.getElementById("app-container");
+    appContainer.innerHTML = "";
+
+    let backButton = document.createElement("button");
+    backButton.setAttribute("type", "button");
+    backButton.innerHTML = "go back";
+    backButton.addEventListener("click", async function (e) {
+        e.preventDefault();
+        loadHomePage();
+    });
+
+    const createCardForm = document.createElement("form");
+    createCardForm.setAttribute("id", "create-card-form");
+
+    const cardQuestionField = document.createElement("input");
+    cardQuestionField.setAttribute("type", "text");
+    cardQuestionField.setAttribute("name", "question");
+    cardQuestionField.setAttribute("id", "card-question-field");
+    cardQuestionField.setAttribute("placeholder", "question");
+
+    const cardAnswerField = document.createElement("input");
+    cardAnswerField.setAttribute("type", "text");
+    cardAnswerField.setAttribute("name", "answer");
+    cardAnswerField.setAttribute("id", "card-answer-field");
+    cardAnswerField.setAttribute("placeholder", "answer");
+
+    const submitButton = document.createElement("input");
+    submitButton.setAttribute("type", "submit");
+    submitButton.setAttribute("value", "Create new card");
+    submitButton.setAttribute("id", "create-new-card-form-submit");
+
+    createCardForm.appendChild(cardQuestionField);
+    createCardForm.appendChild(cardAnswerField);
+    createCardForm.appendChild(submitButton);
+    createCardForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        enableModal();
+        sendCreateCardRequest(deck_id);
+        disableModal();
+        cardQuestionField.value = "";
+        cardAnswerField.value = "";
+    });
+
+    appContainer.appendChild(backButton);
+    appContainer.appendChild(createCardForm);
 }
 
 function renderCardsLearningPage(currentDeck) {
