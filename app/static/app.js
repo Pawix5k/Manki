@@ -189,7 +189,7 @@ async function sendCreateCardRequest(deck_id) {
     }
 
     const response = await fetch(rootUrl + 'card/' + deck_id, req);
-    data = await response.json();
+    // data = await response.json();
     // let newDecks = {}
     // data.decks.forEach(deck => {
     //     newDecks[deck._id] = deck;
@@ -531,10 +531,10 @@ function renderCreateCardForm(deck_id) {
     createCardForm.appendChild(cardQuestionField);
     createCardForm.appendChild(cardAnswerField);
     createCardForm.appendChild(submitButton);
-    createCardForm.addEventListener("submit", function (e) {
+    createCardForm.addEventListener("submit", async function (e) {
         e.preventDefault();
         enableModal();
-        sendCreateCardRequest(deck_id);
+        await sendCreateCardRequest(deck_id);
         disableModal();
         cardQuestionField.value = "";
         cardAnswerField.value = "";
