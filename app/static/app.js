@@ -359,7 +359,7 @@ function createDeckContainer(deckData) {
     let deckBottom = document.createElement("div");
     deckBottom.setAttribute("class", "deck-bottom");
 
-    let deleteDeckDiv = createDeckDiv("delete", "delete deck");
+    let deleteDeckDiv = createDeckDiv("delete", "delete<br>deck");
     deleteDeckDiv.setAttribute("class", "clickable");
     deleteDeckDiv.addEventListener("click", function (e) {
         e.preventDefault();
@@ -367,7 +367,7 @@ function createDeckContainer(deckData) {
         renderConfirmDeleteDialog(deckData["_id"], "Confirm delete deck");
     });
 
-    let addCardsDiv = createDeckDiv("add", "add cards");
+    let addCardsDiv = createDeckDiv("add", "add<br>cards");
     addCardsDiv.setAttribute("class", "clickable");
     addCardsDiv.addEventListener("click", function (e) {
         e.preventDefault();
@@ -385,76 +385,47 @@ function createDeckContainer(deckData) {
     return deckContainer
 }
 
-function renderDecks(decks) {
-    const appContainer = document.getElementById("app-container");
-    appContainer.innerHTML = "";
+function createCreateDeckContainer() {
+    let deckContainer = document.createElement("div");
+    deckContainer.setAttribute("class", "deck-container");
 
-    for (const [deck_id, deck] of Object.entries(decks)) {
-        appContainer.append(createDeckContainer(deck));
-    }
+    let deck = document.createElement("div");
+    deck.setAttribute("class", "deck new-deck");
 
-    let newDeckButton = document.createElement("button");
-    newDeckButton.setAttribute("id", "add-new-card");
-    newDeckButton.innerHTML = "Add new deck";
-    newDeckButton.addEventListener("click", function (e) {
+    let addNewDeckDiv = document.createElement("div");
+    addNewDeckDiv.setAttribute("class", "add-new-deck clickable");
+
+    let iconDiv = document.createElement("div");
+    let span = document.createElement("span");
+    span.setAttribute("class", "material-symbols-outlined size-48");
+    span.setAttribute("style", "font-size:48px;");
+    span.innerHTML = "add";
+    let textDiv = document.createElement("div");
+    textDiv.innerHTML = "Add new deck";
+    iconDiv.appendChild(span);
+    addNewDeckDiv.appendChild(iconDiv);
+    addNewDeckDiv.appendChild(textDiv);
+    addNewDeckDiv.addEventListener("click", function (e) {
         console.log("clicked add new deck");
         e.preventDefault();
         renderCreateDeckForm();
     });
-    appContainer.appendChild(newDeckButton);
+
+    deck.appendChild(addNewDeckDiv);
+
+    deckContainer.appendChild(deck);
+
+    return deckContainer
 }
 
-// function renderDecks(decks) {
-//     const appContainer = document.getElementById("app-container");
-//     appContainer.innerHTML = "";
-
-//     for (const [deck_id, deck] of Object.entries(decks)) {
-//         const deckDiv = document.createElement("div");
-//         const deckDescription = document.createElement("p");
-//         deckDescription.innerHTML = deck.name;
-//         deckDescription.style.fontWeight = "bold";
-//         deckDescription.addEventListener("click", function (e) {
-//             e.preventDefault();
-//             console.log("clicked " + deck_id);
-//             loadCardsLearningPage(deck_id);
-//         });
-
-//         let deleteDeckButton = document.createElement("button");
-//         deleteDeckButton.setAttribute("type", "button");
-//         deleteDeckButton.setAttribute("class", "delete-deck-button");
-//         deleteDeckButton.innerHTML = "delete";
-//         deleteDeckButton.addEventListener("click", function (e) {
-//             e.preventDefault();
-//             renderConfirmDeleteDialog(deck_id, "Confirm delete deck");
-//         });
-
-//         let addCardDeckButton = document.createElement("button");
-//         addCardDeckButton.setAttribute("type", "button");
-//         addCardDeckButton.setAttribute("class", "add-card-deck-button");
-//         addCardDeckButton.innerHTML = "add a card";
-//         addCardDeckButton.addEventListener("click", function (e) {
-//             console.log("dd");
-//             e.preventDefault();
-//             renderCreateCardForm(deck_id);
-//         });
-
-
-//         deckDiv.appendChild(deckDescription);
-//         deckDiv.appendChild(deleteDeckButton);
-//         deckDiv.appendChild(addCardDeckButton);
-//         appContainer.appendChild(deckDiv);
-//     }
-
-//     const newDeckButton = document.createElement("button");
-//     newDeckButton.setAttribute("id", "add-new-card");
-//     newDeckButton.innerHTML = "Add new deck";
-//     newDeckButton.addEventListener("click", function (e) {
-//         console.log("clicked add new deck");
-//         e.preventDefault();
-//         renderCreateDeckForm();
-//     });
-//     appContainer.appendChild(newDeckButton);
-// }
+function renderDecks(decks) {
+    const appContainer = document.getElementById("app-container");
+    appContainer.innerHTML = "";
+    for (const [deck_id, deck] of Object.entries(decks)) {
+        appContainer.append(createDeckContainer(deck));
+    }
+    appContainer.appendChild(createCreateDeckContainer());
+}
 
 function renderCreateDeckForm() {
     console.log(decks);

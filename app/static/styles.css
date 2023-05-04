@@ -71,6 +71,8 @@ footer {
     
 }
 
+
+
 .deck {
     text-align: center;
     /* background-color: red; */
@@ -87,6 +89,14 @@ footer {
 
     padding: 0px;
     margin: 0px;
+}
+
+.new-deck {
+  display: flex;
+    /* align-items: center; */
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #ddd;
 }
 
 .deck-top {
