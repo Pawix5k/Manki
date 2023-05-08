@@ -189,14 +189,6 @@ async function sendCreateCardRequest(deck_id) {
     }
 
     const response = await fetch(rootUrl + 'card/' + deck_id, req);
-    // data = await response.json();
-    // let newDecks = {}
-    // data.decks.forEach(deck => {
-    //     newDecks[deck._id] = deck;
-    // });
-    // decks = newDecks;
-    // console.log(data);
-    // loadHomePage();
 }
 
 async function getDeck(deck_id) {
@@ -265,7 +257,11 @@ function renderConfirmDeleteDialog(deck_id, msg) {
 
     dialogTemplate = `
     <h2>${msg}</h2>
-    <div><button id="close-dialog">back</button><button id="confirm-dialog">confirm</button></div>`;
+    <div>
+        <button id="close-dialog">back</button><button id="confirm-dialog">
+            confirm
+        </button>
+    </div>`;
 
     confirmDeleteDialog.innerHTML = dialogTemplate;
     let closeDialog = document.getElementById("close-dialog");
@@ -569,8 +565,6 @@ async function loadCardsLearningPage(deck_id) {
     renderCardsLearningPage(currentDeck);
 }
 
-// var modal = document.getElementById("modal");
-
 function enableModal() {
     const dialog = document.getElementById("waiting-modal");
     if (!dialog.open) {
@@ -584,23 +578,6 @@ function disableModal() {
         dialog.close();
     }
 }
-
-// const openDialog = () => {
-//     dialog.showModal();
-//   };
-  
-// const closeDialog = (e) => {
-//     e.preventDefault();
-//     dialog.close();
-// };
-// const openDialogBtn = document.getElementById("close_dialog");
-// const closeDialogBtn = document.getElementById("confirm_dialog");
-// openDialogBtn.addEventListener("click", openDialog);
-// closeDialogBtn.addEventListener("click", closeDialog);
-// const dialog = document.querySelector("dialog");
-// dialog.showModal();
-// enableModal();
-
 
 let appContainer = document.getElementById("app-container");
 let rootUrl = "http://127.0.0.1:8000/";
