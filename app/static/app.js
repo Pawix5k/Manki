@@ -304,22 +304,6 @@ function renderConfirmDeleteDialog(deck_id, msg) {
     });
 }
 
-function createDeckDiv(symbol, text) {
-    let div = document.createElement("div");
-    let iconDiv = document.createElement("div");
-    let span = document.createElement("span");
-    span.setAttribute("class", "material-symbols-outlined size-48");
-    span.setAttribute("style", "font-size:36px;");
-    span.innerHTML = symbol
-    let textDiv = document.createElement("div");
-    textDiv.innerHTML = text;
-    iconDiv.appendChild(span);
-    div.appendChild(iconDiv);
-    div.appendChild(textDiv);
-    
-    return div
-}
-
 function createDeckContainer(deckData) {
     let deckName = deckData.name;
     let deckId = deckData._id;
