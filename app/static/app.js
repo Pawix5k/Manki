@@ -280,7 +280,7 @@ function createLoginForm() {
 
 function renderConfirmDeleteDialog(deck_id, msg) {
     let dialog = document.getElementById("confirm-delete-dialog");
-    dialog.open = true;
+    dialog.showModal();
 
     let confirmDeleteDialog = document.getElementById("confirm-delete-dialog");
     confirmDeleteDialog.innerHTML = "";
@@ -302,7 +302,7 @@ function renderConfirmDeleteDialog(deck_id, msg) {
         console.log("BACK");
         e.preventDefault();
         // let dialog = document.getElementById("confirm-delete-dialog");
-        dialog.open = false;
+        dialog.close();
     });
     confirmDialogButton.addEventListener("click", async function(e) {
         console.log("CONFIRM");
@@ -310,7 +310,7 @@ function renderConfirmDeleteDialog(deck_id, msg) {
         enableModal();
         await deleteDeck(deck_id);
         disableModal();
-        dialog.open = false;
+        dialog.close();
         loadHomePage();
     });
 
@@ -338,49 +338,48 @@ function createDeckDiv(symbol, text) {
 }
 
 function createDeckContainer(deckData) {
+    let deckName = deckData.name;
+    let deckId = deckData._id;
+
+    let deckContainerTemplate = `
+        <div class="deck">
+            <div class="deck-top clickable">
+                <p>${deckName}</p>
+            </div>
+            <div class="deck-bottom">
+                <div class="delete clickable">
+                    <div><span class="material-symbols-outlined size-48" style="font-size:36px;">delete</span></div>
+                    <div>delete<br>deck</div>
+                </div>
+                <div class="add-card clickable">
+                    <div><span class="material-symbols-outlined size-48" style="font-size:36px;">add</span></div>
+                    <div>add<br>cards</div>
+                </div>
+            </div>
+        </div>`;
+    
     let deckContainer = document.createElement("div");
     deckContainer.setAttribute("class", "deck-container");
+    deckContainer.innerHTML = deckContainerTemplate;
 
-    let deck = document.createElement("div");
-    deck.setAttribute("class", "deck");
-
-    let deckTop = document.createElement("div");
-    deckTop.setAttribute("class", "deck-top clickable");
-    deckTop.addEventListener("click", function (e) {
+    let topDiv = deckContainer.getElementsByClassName("deck-top")[0];
+    topDiv.addEventListener("click", function (e) {
         e.preventDefault();
-        loadCardsLearningPage(deckData["_id"]);
+        loadCardsLearningPage(deckId);
     });
 
-    let p = document.createElement("p");
-    p.innerHTML = deckData["name"];
-
-    deckTop.appendChild(p);
-
-    let deckBottom = document.createElement("div");
-    deckBottom.setAttribute("class", "deck-bottom");
-
-    let deleteDeckDiv = createDeckDiv("delete", "delete<br>deck");
-    deleteDeckDiv.setAttribute("class", "clickable");
-    deleteDeckDiv.addEventListener("click", function (e) {
+    let deleteDiv = deckContainer.getElementsByClassName("delete")[0];
+    deleteDiv.addEventListener("click", function (e) {
         e.preventDefault();
         console.log("dd")
-        renderConfirmDeleteDialog(deckData["_id"], "Confirm delete deck");
+        renderConfirmDeleteDialog(deckId, "Confirm delete deck");
     });
 
-    let addCardsDiv = createDeckDiv("add", "add<br>cards");
-    addCardsDiv.setAttribute("class", "clickable");
-    addCardsDiv.addEventListener("click", function (e) {
+    let addCardDiv = deckContainer.getElementsByClassName("add-card")[0];
+    addCardDiv.addEventListener("click", function (e) {
         e.preventDefault();
-        renderCreateCardForm(deckData["_id"]);
+        renderCreateCardForm(deckId);
     });
-
-    deckBottom.appendChild(deleteDeckDiv);
-    deckBottom.appendChild(addCardsDiv);
-
-    deck.appendChild(deckTop);
-    deck.appendChild(deckBottom);
-
-    deckContainer.appendChild(deck);
 
     return deckContainer
 }
@@ -516,7 +515,6 @@ function renderCreateCardForm(deck_id) {
 }
 
 function renderCardsLearningPage(currentDeck) {
-    enableModal();
     const appContainer = document.getElementById("app-container");
     appContainer.innerHTML = "";
     let backButton = document.createElement("button");
@@ -604,7 +602,6 @@ function renderCardsLearningPage(currentDeck) {
         appContainer.appendChild(wrongButton);
         appContainer.appendChild(correctButton);
     }
-    disableModal();
 }
 
 async function loadHomePage() {
