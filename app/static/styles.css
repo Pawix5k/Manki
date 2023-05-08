@@ -100,13 +100,17 @@ footer {
 }
 
 .deck-top {
-    font-weight: bold;
+    /* font-weight: bold; */
     
     height: 50%;
     align-items: center;
     justify-content: center;
     border-bottom: 1px solid #ddd;
     /* cursor: pointer; */
+}
+
+.deck-top>p {
+  font-size: 1.4em;
 }
 
 .deck-bottom {
