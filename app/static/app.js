@@ -449,95 +449,179 @@ function renderCreateCardForm(deck_id) {
     appContainer.appendChild(createCardForm);
 }
 
-function renderCardsLearningPage(currentDeck) {
-    const appContainer = document.getElementById("app-container");
-    appContainer.innerHTML = "";
-    let backButton = document.createElement("button");
-    backButton.setAttribute("type", "button");
-    backButton.innerHTML = "go back";
-    backButton.addEventListener("click", async function (e) {
-        console.log(currentDeck.updates);
-        console.log(currentDeck.buildDeckUpdateRequestBody());
-        e.preventDefault();
-        if (!currentDeck.isUpdatesEmpty()) {
-            await sendDeckUpdates(currentDeck.buildDeckUpdateRequestBody());
-        }
-        loadHomePage();
-    });
+// ================ CARD LEARNING ================
 
-    let cardsInterface = document.createElement("div");
-    cardsInterface.setAttribute("id", "cards-interface");
-
-    appContainer.appendChild(backButton);
-    appContainer.appendChild(cardsInterface);
-
-
-
-    if (currentDeck.isQueueEmpty()) {
-        cardsInterface.innerHTML = "";
-        let cardDiv = document.createElement("div");
-        cardDiv.innerHTML = "No cards to learn today!";
-
-        cardsInterface.appendChild(cardDiv);
+function createCardDiv(question, answer, showAnswer=false) {
+    if (showAnswer) {
+        var answerTemplate = `<p id="answer">${answer}</p>`;
     }
     else {
-        cardsInterface.innerHTML = "";
-
-        let topCard = currentDeck.getTopCard();
-        let question = topCard.question;
-        let answer = topCard.answer;
-        let intervalTime = currentDeck.getNextCardsInterval();
-
-        let questionParagraph = document.createElement("p");
-        questionParagraph.innerHTML = "question: " + question;
-        questionParagraph.setAttribute("id", "question");
-
-        let answerParagraph = document.createElement("p");
-        answerParagraph.innerHTML = "answer: " + answer;
-        answerParagraph.setAttribute("id", "answer");
-        answerParagraph.style.visibility = "hidden";
-
-        let showButton = document.createElement("button");
-        showButton.setAttribute("type", "button");
-        showButton.setAttribute("id", "show-button");
-        showButton.innerHTML = "show";
-        showButton.addEventListener("click", function (e) {
-            e.preventDefault();
-            this.style.visibility = "hidden";
-            document.getElementById("wrong-button").style.visibility = "visible";
-            document.getElementById("correct-button").style.visibility = "visible";
-            answerParagraph.style.visibility = "visible";
-        });
-
-        let wrongButton = document.createElement("button");
-        wrongButton.setAttribute("type", "button");
-        wrongButton.setAttribute("id", "wrong-button");
-        wrongButton.style.visibility = "hidden";
-        wrongButton.innerHTML = "wrong";
-        wrongButton.addEventListener("click", function (e) {
-            e.preventDefault();
-            currentDeck.wrongAnswer();
-            renderCardsLearningPage(currentDeck);
-        });
-        
-        let correctButton = document.createElement("button");
-        correctButton.setAttribute("type", "button");
-        correctButton.setAttribute("id", "correct-button");
-        correctButton.style.visibility = "hidden";
-        correctButton.innerHTML = "correct (" + intervalTime + ")";
-        correctButton.addEventListener("click", function (e) {
-            e.preventDefault();
-            currentDeck.correctAnswer();
-            renderCardsLearningPage(currentDeck);
-        });
-        
-        appContainer.appendChild(questionParagraph);
-        appContainer.appendChild(answerParagraph);
-        appContainer.appendChild(showButton);
-        appContainer.appendChild(wrongButton);
-        appContainer.appendChild(correctButton);
+        var answerTemplate = `<p id="answer" style="display: none;">${answer}</p>`;
     }
+    let cardTemplate = `
+    <div id="current-card-top">
+        <p id="question">${question}</p>
+    </div>
+    <div id="current-card-bottom">
+        ${answerTemplate}
+    </div>`;
+    let outerDiv = document.createElement("div");
+    outerDiv.setAttribute("id", "current-card");
+    outerDiv.innerHTML = cardTemplate;
+    return outerDiv
 }
+
+function disableButtons() {
+    console.log("disabling buttons");
+    let showAnswer = document.getElementById("show-answer");
+    console.log(showAnswer);
+    let wrongAnswer = document.getElementById("wrong-answer");
+    let correctAnswer = document.getElementById("correct-answer");
+    showAnswer.style.display = "none";
+    wrongAnswer.style.display = "none";
+    correctAnswer.style.display = "none";
+}
+
+function loadCurrentCard(cur) {
+    let cardData = cur.getTopCard();
+    let cardContainer = document.getElementById("card-container");
+
+    if (cardData) {
+        var currentCard = createCardDiv(cardData.question, cardData.answer);
+    }
+    else {
+        var currentCard = createCardDiv("🤓", "No cards left to study!", true);
+    }
+    cardContainer.appendChild(currentCard);
+}
+
+
+function renderCardsLearningPage(currentDeck) {
+    let appContainer = document.getElementById("app-container");
+    let cardsLearningPageTemplate = `
+    <div id="controls">
+        <div id="edit" class="clickable">
+            <div>
+                <span class="material-symbols-outlined size-48" style="font-size:36px;">arrow_back_ios_new</span>
+            </div>
+            <div>
+                <p>sync and go back</p>
+            </div>
+        </div>
+        <div id="list-view" class="clickable">
+            <div>
+                <span class="material-symbols-outlined size-48" style="font-size:36px;">list</span>
+            </div>
+            <div>
+                <p>list view</p>
+            </div>
+        </div>
+        <div id="edit" class="clickable">
+            <div>
+                <span class="material-symbols-outlined size-48" style="font-size:36px;">edit</span>
+            </div>
+            <div>
+                <p>edit card</p>
+            </div>
+        </div>
+    </div>
+    <div id="card-container">
+    </div>
+    <div id="buttons-div" class="prevent-select">
+        <div id="show-answer" class="clickable" style="display: block;">
+            <div>
+                <span class="material-symbols-outlined size-48" style="font-size:36px;">visibility</span>
+            </div>
+            <div>
+                <p class="learning-button">show answer</p>
+            </div>
+        </div>
+        <div id="wrong-answer" class="clickable" style="display: none;">
+            <div>
+                <span class="material-symbols-outlined size-48" style="font-size:36px;">close</span>
+            </div>
+            <div>
+                <p class="learning-button">wrong answer</p>
+            </div>
+        </div>
+        <div id="correct-answer" class="clickable" style="display: none;">
+            <div>
+                <span class="material-symbols-outlined size-48" style="font-size:36px;">check</span>
+            </div>
+            <div>
+                <p class="learning-button">correct (5 days)</p>
+            </div>
+        </div>
+    </div>`;
+
+    appContainer.innerHTML = cardsLearningPageTemplate;
+
+    let showAnswer = document.getElementById("show-answer");
+    if (currentDeck.isQueueEmpty()) {
+        showAnswer.style.display = "none";
+    }
+    let wrongAnswer = document.getElementById("wrong-answer");
+    let correctAnswer = document.getElementById("correct-answer");
+    showAnswer.addEventListener("click", function(e) {
+        let toDelete = document.getElementById("animated-card");
+        if (toDelete) {
+            toDelete.remove();
+        }
+        let answer = document.getElementById("answer");
+        answer.style.display = "block";
+        this.style.display = "none";
+        wrongAnswer.style.display = "block";
+        correctAnswer.style.display = "block";
+    });
+
+    correctAnswer.addEventListener("click", function(e) {
+        let toDelete = document.getElementById("animated-card");
+        if (toDelete) {
+            toDelete.remove();
+        }
+        let currentCard = document.getElementById("current-card");
+        currentCard.setAttribute("id", "animated-card");
+        if (currentDeck.getTopCard().last_was_wrong) {
+            currentCard.setAttribute("class", "reshuffle");
+        }
+        else {
+            currentCard.setAttribute("class", "drop");
+        }
+        currentDeck.correctAnswer();
+        loadCurrentCard(currentDeck);
+        if (!currentDeck.isQueueEmpty()) {
+            this.style.display = "none";
+            wrongAnswer.style.display = "none";
+            showAnswer.style.display = "block";
+        }
+        else {
+            this.style.display = "none";
+            wrongAnswer.style.display = "none";
+            showAnswer.style.display = "block";
+            showAnswer.style.visibility = "hidden";
+        }
+    });
+
+    wrongAnswer.addEventListener("click", function(e) {
+        let toDelete = document.getElementById("animated-card");
+        if (toDelete) {
+            toDelete.remove();
+        }
+        let currentCard = document.getElementById("current-card");
+        currentCard.setAttribute("id", "animated-card");
+        currentCard.setAttribute("class", "reshuffle");
+        currentDeck.wrongAnswer();
+        loadCurrentCard(currentDeck);
+        this.style.display = "none";
+        correctAnswer.style.display = "none";
+        showAnswer.style.display = "block";
+    });
+
+    loadCurrentCard(currentDeck);
+}
+
+// ================ END CARD LEARNING ================
+
 
 async function loadHomePage() {
     console.log("attempting to load decks");

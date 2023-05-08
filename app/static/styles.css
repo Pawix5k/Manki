@@ -127,6 +127,189 @@ p {
     margin: 0px;
 }
 
+/* ==== cards learning page ==== */
+
+#card-container {
+  aspect-ratio: 5/7;
+  grid-column: 3 / span 2;
+  align-self:flex-end;
+}
+
+#buttons-div {
+  grid-column: 3 / span 2;
+  align-self: start;
+  display: flex;
+  font-size: 0.8em;
+  /* height: 10vmin; */
+
+  /* justify-content: stretch;
+  align-content: stretch; */
+}
+
+#show-answer {
+  /* width: 50%; */
+  padding: 3%;
+  width: 100%;
+  display: block;
+  text-align: center;
+  /* background-color: rgba(180, 30, 30, 0.1); */
+
+  border: 2px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-radius: 20px;
+
+  /* display: none; */
+}
+
+#wrong-answer {
+  /* width: 50%; */
+  padding: 3%;
+  width: 50%;
+  display: block;
+  text-align: center;
+  background-color: rgb(255, 240, 240);
+
+  border: 2px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+
+  display: none;
+
+}
+
+#correct-answer {
+  padding: 3%;
+  width: 50%;
+  display: block;
+  text-align: center;
+  background-color: rgb(240, 255, 240);
+
+  border: 2px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+
+  display: none;
+
+}
+
+p.learning-button {
+  padding: 0;
+}
+
+#card-container{
+  position: relative;
+  font-size: 1.6em;
+}
+
+#card-container,
+#current-card,
+#animated-card {
+  aspect-ratio: 5/7;
+}
+
+/* #current-card{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+} */
+
+
+#current-card,
+#animated-card {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  border: 2px solid #ddd;
+  border-radius: 5%;
+  background-color: white;
+}
+
+/* #current-card {
+  background-color: rgb(150, 0, 0);
+}
+
+#animated-card {
+  background-color: rgb(200, 150, 150);
+} */
+
+#current-card-top,
+#current-card-bottom,
+#animated-card-top,
+#animated-card-bottom{
+  height: 50%;
+  text-align: center;
+}
+
+#current-card-top,
+#animated-card-top {
+  border-bottom: 1px solid #ddd;
+}
+
+
+#current-card-bottom,
+#animated-card-bottom {
+  border-top: 1px solid #ddd;
+}
+
+
+.reshuffle {
+  animation: reshuffle 0.8s 1 cubic-bezier(.27,0,.32,.94);
+}
+
+@keyframes reshuffle {
+  0% {
+  transform: translate(0%);
+  z-index: 5;
+  }
+  50% {
+      transform: translate(120%) scale(90%);
+      z-index: -1;
+  }
+  100% {
+      transform: scale(80%);
+  }
+}
+
+.drop {
+  animation: drop 0.8s 1 cubic-bezier(.27,0,.32,.94);
+}
+
+@keyframes drop {
+  from {
+  /* transform: translate(0%); */
+  z-index: 5;
+  }
+  to {
+      transform: translateX(-300%) translateY(10%) scale(90%) rotate(-60deg);
+      z-index: -1;
+      /* opacity: 0; */
+  }
+}
+
+
+.prevent-select {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+
+#controls {
+  padding-top: 50px;
+  grid-column: 1 / span 1;
+  display: block;
+}
+
+#edit,
+#back,
+#list-view {
+  display: block;
+  text-align: center;
+}
+
+/* ==== end cards learning page ==== */
+
 .rotate {
   animation: rotation 1.2s infinite cubic-bezier(.72,.21,.4,.9);
 }
@@ -192,10 +375,6 @@ input:focus {
   /* background-color: #ddd; */
   outline: none;
 }
-
-/* ::placeholder {
-  text-align: center; 
-} */
 
 #app-container>form>input[type=submit] {
   /* width: 50%; */
