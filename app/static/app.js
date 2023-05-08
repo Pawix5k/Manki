@@ -95,8 +95,11 @@ class CurrentDeck {
         }
         let index = this.getTopCard().last_interval + 1;
         index = Math.min(index, this.intervals.length);
-
-        return this.intervals[index] + " days"
+        let numberOfDays = this.intervals[index]
+        if (numberOfDays == 1) {
+            return "1 day"
+        }
+        return "${numberOfDays} days"
     }
 
     isQueueEmpty () {
@@ -495,6 +498,11 @@ function loadCurrentCard(cur) {
     cardContainer.appendChild(currentCard);
 }
 
+function updateIntervalInButton(nextInterval){
+    let correctButtonText = document.getElementById("correct-button-text");
+    correctButtonText.innerHTML = `correct (${nextInterval})`;
+}
+
 
 function renderCardsLearningPage(currentDeck) {
     let appContainer = document.getElementById("app-container");
@@ -549,7 +557,7 @@ function renderCardsLearningPage(currentDeck) {
                 <span class="material-symbols-outlined size-48" style="font-size:36px;">check</span>
             </div>
             <div>
-                <p class="learning-button">correct (5 days)</p>
+                <p class="learning-button" id="correct-button-text"></p>
             </div>
         </div>
     </div>`;
@@ -600,6 +608,7 @@ function renderCardsLearningPage(currentDeck) {
             showAnswer.style.display = "block";
             showAnswer.style.visibility = "hidden";
         }
+        updateIntervalInButton(currentDeck.getNextCardsInterval());
     });
 
     wrongAnswer.addEventListener("click", function(e) {
@@ -615,9 +624,11 @@ function renderCardsLearningPage(currentDeck) {
         this.style.display = "none";
         correctAnswer.style.display = "none";
         showAnswer.style.display = "block";
+        updateIntervalInButton(currentDeck.getNextCardsInterval());
     });
 
     loadCurrentCard(currentDeck);
+    updateIntervalInButton(currentDeck.getNextCardsInterval());
 }
 
 // ================ END CARD LEARNING ================
