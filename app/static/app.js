@@ -242,40 +242,21 @@ async function deleteDeck(deck_id) {
 }
 
 function createLoginForm() {
-    const appContainer = document.getElementById("app-container");
+    let appContainer = document.getElementById("app-container");
     appContainer.innerHTML = "";
 
-    const loginForm = document.createElement("form");
-    loginForm.setAttribute("id", "login-form");
+    let loginFormTemplate = `
+    <form id="login-form">
+        <input type="text" name="username" id="username-field" class="login-form-field" placeholder="Username">
+        <input type="password" name="password" id="password-field" class="login-form-field" placeholder="Password">
+        <input type="submit" value="Login" id="login-form-submit">
+    </form>`;
 
-    const usernameField = document.createElement("input");
-    usernameField.setAttribute("type", "text");
-    usernameField.setAttribute("name", "username");
-    usernameField.setAttribute("id", "username-field");
-    usernameField.setAttribute("class", "login-form-field");
-    usernameField.setAttribute("placeholder", "Username");
-
-    const passwordField = document.createElement("input");
-    passwordField.setAttribute("type", "password");
-    passwordField.setAttribute("name", "password");
-    passwordField.setAttribute("id", "password-field");
-    passwordField.setAttribute("class", "login-form-field");
-    passwordField.setAttribute("placeholder", "Password");
-
-    const submitButton = document.createElement("input");
-    submitButton.setAttribute("type", "submit");
-    submitButton.setAttribute("value", "Login");
-    submitButton.setAttribute("id", "login-form-submit");
-
-    loginForm.appendChild(usernameField);
-    loginForm.appendChild(passwordField);
-    loginForm.appendChild(submitButton);
-    loginForm.addEventListener("submit", function (e) {
+    appContainer.innerHTML = loginFormTemplate;
+    document.getElementById("login-form").addEventListener("submit", function (e) {
         e.preventDefault();
         sendLoginRequest();
     });
-
-    appContainer.appendChild(loginForm);
 }
 
 function renderConfirmDeleteDialog(deck_id, msg) {
@@ -312,6 +293,7 @@ function createDeckContainer(deckData) {
         <div class="deck">
             <div class="deck-top clickable">
                 <p>${deckName}</p>
+                <span class="material-symbols-outlined size-48" style="font-size:48px;">play_arrow</span>
             </div>
             <div class="deck-bottom">
                 <div class="delete clickable">
