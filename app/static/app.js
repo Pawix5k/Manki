@@ -385,34 +385,54 @@ function createDeckContainer(deckData) {
 }
 
 function createCreateDeckContainer() {
+    let createDeckTemplate = `
+    <div class="deck new-deck">
+        <div class="add-new-deck clickable">
+            <div><span class="material-symbols-outlined size-48" style="font-size:48px;">add</span></div>
+            <div>Add new deck</div>
+        </div>
+    </div>`;
+
     let deckContainer = document.createElement("div");
     deckContainer.setAttribute("class", "deck-container");
+    deckContainer.innerHTML = createDeckTemplate;
 
-    let deck = document.createElement("div");
-    deck.setAttribute("class", "deck new-deck");
-
-    let addNewDeckDiv = document.createElement("div");
-    addNewDeckDiv.setAttribute("class", "add-new-deck clickable");
-
-    let iconDiv = document.createElement("div");
-    let span = document.createElement("span");
-    span.setAttribute("class", "material-symbols-outlined size-48");
-    span.setAttribute("style", "font-size:48px;");
-    span.innerHTML = "add";
-    let textDiv = document.createElement("div");
-    textDiv.innerHTML = "Add new deck";
-    iconDiv.appendChild(span);
-    addNewDeckDiv.appendChild(iconDiv);
-    addNewDeckDiv.appendChild(textDiv);
-    addNewDeckDiv.addEventListener("click", function (e) {
+    let createDeckDiv = deckContainer.getElementsByClassName("add-new-deck")[0];
+    createDeckDiv.addEventListener("click", function (e) {
         console.log("clicked add new deck");
         e.preventDefault();
         renderCreateDeckForm();
     });
 
-    deck.appendChild(addNewDeckDiv);
 
-    deckContainer.appendChild(deck);
+    // let deckContainer = document.createElement("div");
+    // deckContainer.setAttribute("class", "deck-container");
+
+    // let deck = document.createElement("div");
+    // deck.setAttribute("class", "deck new-deck");
+
+    // let addNewDeckDiv = document.createElement("div");
+    // addNewDeckDiv.setAttribute("class", "add-new-deck clickable");
+
+    // let iconDiv = document.createElement("div");
+    // let span = document.createElement("span");
+    // span.setAttribute("class", "material-symbols-outlined size-48");
+    // span.setAttribute("style", "font-size:48px;");
+    // span.innerHTML = "add";
+    // let textDiv = document.createElement("div");
+    // textDiv.innerHTML = "Add new deck";
+    // iconDiv.appendChild(span);
+    // addNewDeckDiv.appendChild(iconDiv);
+    // addNewDeckDiv.appendChild(textDiv);
+    // addNewDeckDiv.addEventListener("click", function (e) {
+    //     console.log("clicked add new deck");
+    //     e.preventDefault();
+    //     renderCreateDeckForm();
+    // });
+
+    // deck.appendChild(addNewDeckDiv);
+
+    // deckContainer.appendChild(deck);
 
     return deckContainer
 }
