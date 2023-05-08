@@ -12,7 +12,7 @@ ul, li {
 
 .grid-container {
   display: grid;
-  grid-template-columns: 1fr 5fr 1fr;
+  grid-template-columns: 1fr 8fr 1fr;
   grid-template-rows: 0.1fr auto 0.1fr;
   column-gap: 30px;
   align-items:stretch;
@@ -136,7 +136,7 @@ p {
     }
   }
 
-dialog {
+dialog#waiting-modal {
   opacity: 1;
   padding: 100px;
   border: none;
@@ -146,14 +146,19 @@ dialog {
   outline: none;
 }
 
-dialog::backdrop {
+dialog#waiting-modal::backdrop {
   position: fixed;
   inset: 0px;
   background: rgba(0, 0, 0, 0.2);
 }
 
-dialog>img {
+dialog#waiting-modal>img {
   opacity: 0.6;
+}
+
+dialog#confirm-delete-dialog {
+  position: fixed;
+  top: 50%;
 }
 
 .clickable {
