@@ -279,46 +279,29 @@ function createLoginForm() {
 }
 
 function renderConfirmDeleteDialog(deck_id, msg) {
-    let dialog = document.getElementById("confirm-delete-dialog");
-    dialog.showModal();
-
     let confirmDeleteDialog = document.getElementById("confirm-delete-dialog");
-    confirmDeleteDialog.innerHTML = "";
+    confirmDeleteDialog.showModal();
 
-    let header = document.createElement("h2");
-    header.innerHTML = msg;
+    dialogTemplate = `
+    <h2>${msg}</h2>
+    <div><button id="close-dialog">back</button><button id="confirm-dialog">confirm</button></div>`;
 
-    let buttonsDiv = document.createElement("div");
-
-    let closeDialogButton = document.createElement("button");
-    closeDialogButton.setAttribute("id", "close-dialog");
-    closeDialogButton.innerHTML = "back";
-
-    let confirmDialogButton = document.createElement("button");
-    confirmDialogButton.setAttribute("id", "confirm-dialog");
-    confirmDialogButton.innerHTML = "confirm";
-
-    closeDialogButton.addEventListener("click", function(e) {
-        console.log("BACK");
+    confirmDeleteDialog.innerHTML = dialogTemplate;
+    let closeDialog = document.getElementById("close-dialog");
+    closeDialog.addEventListener("click", function(e) {
         e.preventDefault();
-        // let dialog = document.getElementById("confirm-delete-dialog");
-        dialog.close();
+        confirmDeleteDialog.close();
     });
-    confirmDialogButton.addEventListener("click", async function(e) {
-        console.log("CONFIRM");
+
+    let confirmDialog = document.getElementById("confirm-dialog");
+    confirmDialog.addEventListener("click", async function(e) {
         e.preventDefault();
         enableModal();
         await deleteDeck(deck_id);
         disableModal();
-        dialog.close();
+        confirmDeleteDialog.close();
         loadHomePage();
     });
-
-    buttonsDiv.appendChild(closeDialogButton);
-    buttonsDiv.appendChild(confirmDialogButton);
-
-    confirmDeleteDialog.appendChild(header);
-    confirmDeleteDialog.appendChild(buttonsDiv);
 }
 
 function createDeckDiv(symbol, text) {
