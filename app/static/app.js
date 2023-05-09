@@ -250,7 +250,9 @@ function createLoginForm() {
     appContainer.innerHTML = loginFormTemplate;
     document.getElementById("login-form").addEventListener("submit", function (e) {
         e.preventDefault();
+        enableModal();
         sendLoginRequest();
+        disableModal();
     });
 }
 
@@ -454,6 +456,35 @@ function renderCreateCardForm(deck_id) {
 
 // ================ CARD LEARNING ================
 
+function renderEditCardView(currentDeck) {
+    let currentCard = currentDeck.getTopCard();
+    let oldQuestion = currentCard.question;
+    let oldAnswer = currentCard.answer;
+    let editCardView = `
+    <form id="edit-card-form">
+        <input type="text" name="question" id="card-question-field" placeholder="question" value="${oldQuestion}">
+        <input type="text" name="answer" id="card-answer-field" placeholder="answer" value="${oldAnswer}">
+        <input type="submit" value="Edit card" id="edit-card-form-submit">
+    </form>`;
+
+    appContainer.innerHTML = editCardView;
+    let form = document.getElementById("edit-card-form")
+    form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        let newQuestion = document.getElementById("card-question-field").value;
+        let newAnswer = document.getElementById("card-answer-field").value;
+
+        // enableModal();
+        // await sendCreateCardRequest(deck_id);
+        // disableModal();
+        currentCard.question = newQuestion;
+        currentCard.answer = newAnswer;
+        renderCardsLearningPage(currentDeck);
+    });
+
+
+}
+
 function createCardDiv(question, answer, showAnswer=false) {
     if (showAnswer) {
         var answerTemplate = `<p id="answer">${answer}</p>`;
@@ -493,7 +524,7 @@ function loadCurrentCard(cur) {
         var currentCard = createCardDiv(cardData.question, cardData.answer);
     }
     else {
-        var currentCard = createCardDiv("🤓", "No cards left to study!", true);
+        var currentCard = createCardDiv("<h1>🤓</h1>", "No cards left to study!", true);
     }
     cardContainer.appendChild(currentCard);
 }
@@ -503,12 +534,22 @@ function updateIntervalInButton(nextInterval){
     correctButtonText.innerHTML = `correct (${nextInterval})`;
 }
 
+function refreshCardsLearningVariables(currentDeck) {
+    loadCurrentCard(currentDeck);
+    if (!currentDeck.isQueueEmpty()) {
+        updateIntervalInButton(currentDeck.getNextCardsInterval());
+    }
+    // let editCardButton = document.getElementById("edit-card");
+    // editCardButton.addEventListener("click", function(e) {
+        
+    // });
+}
 
 function renderCardsLearningPage(currentDeck) {
     let appContainer = document.getElementById("app-container");
     let cardsLearningPageTemplate = `
     <div id="controls">
-        <div id="edit" class="clickable">
+        <div id="back" class="clickable">
             <div>
                 <span class="material-symbols-outlined size-48" style="font-size:36px;">arrow_back_ios_new</span>
             </div>
@@ -524,7 +565,7 @@ function renderCardsLearningPage(currentDeck) {
                 <p>list view</p>
             </div>
         </div>
-        <div id="edit" class="clickable">
+        <div id="edit-card" class="clickable">
             <div>
                 <span class="material-symbols-outlined size-48" style="font-size:36px;">edit</span>
             </div>
@@ -561,8 +602,16 @@ function renderCardsLearningPage(currentDeck) {
             </div>
         </div>
     </div>`;
-
     appContainer.innerHTML = cardsLearningPageTemplate;
+
+    let editCardButton = document.getElementById("edit-card");
+    editCardButton.addEventListener("click", function(e) {
+        if (!currentDeck.isQueueEmpty()) {
+            console.log(currentDeck.getTopCard());
+            renderEditCardView(currentDeck);
+        }
+    });
+
 
     let showAnswer = document.getElementById("show-answer");
     if (currentDeck.isQueueEmpty()) {
@@ -596,7 +645,6 @@ function renderCardsLearningPage(currentDeck) {
             currentCard.setAttribute("class", "drop");
         }
         currentDeck.correctAnswer();
-        loadCurrentCard(currentDeck);
         if (!currentDeck.isQueueEmpty()) {
             this.style.display = "none";
             wrongAnswer.style.display = "none";
@@ -608,7 +656,7 @@ function renderCardsLearningPage(currentDeck) {
             showAnswer.style.display = "block";
             showAnswer.style.visibility = "hidden";
         }
-        updateIntervalInButton(currentDeck.getNextCardsInterval());
+        refreshCardsLearningVariables(currentDeck);
     });
 
     wrongAnswer.addEventListener("click", function(e) {
@@ -620,15 +668,13 @@ function renderCardsLearningPage(currentDeck) {
         currentCard.setAttribute("id", "animated-card");
         currentCard.setAttribute("class", "reshuffle");
         currentDeck.wrongAnswer();
-        loadCurrentCard(currentDeck);
         this.style.display = "none";
         correctAnswer.style.display = "none";
         showAnswer.style.display = "block";
-        updateIntervalInButton(currentDeck.getNextCardsInterval());
+        refreshCardsLearningVariables(currentDeck);
     });
 
-    loadCurrentCard(currentDeck);
-    updateIntervalInButton(currentDeck.getNextCardsInterval());
+    refreshCardsLearningVariables(currentDeck);
 }
 
 // ================ END CARD LEARNING ================
@@ -674,7 +720,7 @@ function disableModal() {
     }
 }
 
-let appContainer = document.getElementById("app-container");
+var appContainer = document.getElementById("app-container");
 let rootUrl = "http://127.0.0.1:8000/";
 var decks = undefined;
 
