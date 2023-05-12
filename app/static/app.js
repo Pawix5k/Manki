@@ -738,6 +738,11 @@ function renderCardsLearningPage(currentDeck) {
 
 // ================ END CARD LEARNING ================
 
+function toggleDarkMode() {
+    let element = document.body;
+    element.classList.toggle("dark-mode");
+}
+
 
 async function loadHomePage() {
     console.log("attempting to load decks");
