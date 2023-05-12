@@ -301,6 +301,10 @@ function createDeckContainer(deckData) {
                     <div><span class="material-symbols-outlined size-48" style="font-size:36px;">delete</span></div>
                     <div>delete<br>deck</div>
                 </div>
+                <div class="list clickable">
+                    <div><span class="material-symbols-outlined size-48" style="font-size:36px;">list</span></div>
+                    <div>list<br>view</div>
+                </div>
                 <div class="add-card clickable">
                     <div><span class="material-symbols-outlined size-48" style="font-size:36px;">add</span></div>
                     <div>add<br>cards</div>
@@ -325,10 +329,17 @@ function createDeckContainer(deckData) {
         renderConfirmDeleteDialog(deckId, "Confirm delete deck");
     });
 
+    let listDiv = deckContainer.getElementsByClassName("list")[0];
+    listDiv.addEventListener("click", function (e) {
+        e.preventDefault();
+        console.log("clicking list-view")
+        loadListView(deckId);
+    });
+
     let addCardDiv = deckContainer.getElementsByClassName("add-card")[0];
     addCardDiv.addEventListener("click", function (e) {
         e.preventDefault();
-        renderCreateCardForm(deckId);
+        renderCreateCardForm(deckId, loadHomePage);
     });
 
     return deckContainer
@@ -406,7 +417,7 @@ function renderCreateDeckForm() {
     appContainer.appendChild(createDeckForm);
 }
 
-function renderCreateCardForm(deck_id) {
+function renderCreateCardForm(deck_id, callback) {
     const appContainer = document.getElementById("app-container");
     appContainer.innerHTML = "";
 
@@ -415,7 +426,7 @@ function renderCreateCardForm(deck_id) {
     backButton.innerHTML = "go back";
     backButton.addEventListener("click", async function (e) {
         e.preventDefault();
-        loadHomePage();
+        callback();
     });
 
     const createCardForm = document.createElement("form");
@@ -452,6 +463,31 @@ function renderCreateCardForm(deck_id) {
 
     appContainer.appendChild(backButton);
     appContainer.appendChild(createCardForm);
+}
+
+function eta(date) {
+    return "now"
+}
+
+function renderListView(deckData) {
+    appContainer.innerHTML = "";
+    let table = document.createElement("div");
+    table.setAttribute("class", "div-table");
+    for (const card of deckData.cards) {
+        let row = document.createElement('div');
+        row.setAttribute("class", "table-row");
+        cells = `
+			<div class="table-cell big">${card.question}</div>
+			<div class="table-cell big">${card.answer}</div>
+			<div class="table-cell small">${eta(card.date)}</div>`;
+        row.innerHTML = cells;
+        table.appendChild(row);
+        // console.log(temp.firstChild);
+    }
+    appContainer.appendChild(table);
+    // table = document.createElement("div");
+    // table.setAttribute("class", "empty");
+    // appContainer.appendChild(table);
 }
 
 // ================ CARD LEARNING ================
@@ -573,6 +609,22 @@ function renderCardsLearningPage(currentDeck) {
                 <p>edit card</p>
             </div>
         </div>
+        <div id="add-new-card" class="clickable">
+            <div>
+                <span class="material-symbols-outlined size-48" style="font-size:36px;">add</span>
+            </div>
+            <div>
+                <p>add new card</p>
+            </div>
+        </div>
+        <div id="remove-card" class="clickable">
+            <div>
+                <span class="material-symbols-outlined size-48" style="font-size:36px;">delete</span>
+            </div> 
+            <div>
+                <p>remove card</p>
+            </div>
+        </div>
     </div>
     <div id="card-container">
     </div>
@@ -610,6 +662,13 @@ function renderCardsLearningPage(currentDeck) {
             console.log(currentDeck.getTopCard());
             renderEditCardView(currentDeck);
         }
+    });
+
+    let addNewCardButton = document.getElementById("add-new-card");
+    addNewCardButton.addEventListener("click", function(e) {
+            console.log("dd");
+            const callback = function() { return loadCardsLearningPage(currentDeck.deck._id); };
+            renderCreateCardForm(currentDeck.deck._id, callback);
     });
 
 
@@ -718,6 +777,13 @@ function disableModal() {
     if (dialog.open) {
         dialog.close();
     }
+}
+
+async function loadListView(deckId) {
+    enableModal();
+    let deckData = await getDeck(deckId);
+    disableModal();
+    renderListView(deckData);
 }
 
 var appContainer = document.getElementById("app-container");

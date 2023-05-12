@@ -12,7 +12,7 @@ ul, li {
 
 .grid-container {
   display: grid;
-  grid-template-columns: 1fr 8fr 1fr;
+  grid-template-columns: 1fr 5fr 1fr;
   grid-template-rows: 0.1fr auto 0.1fr;
   column-gap: 30px;
   align-items:stretch;
@@ -50,6 +50,7 @@ footer {
 }
 
 #app-container {
+  /* margin-top: 50px; */
     grid-column: 2 / span 1;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -303,12 +304,49 @@ p.learning-button {
 
 #edit-card,
 #back,
-#list-view {
+#list-view,
+#add-new-card,
+#remove-card {
   display: block;
   text-align: center;
 }
 
+#controls * p {
+  margin-block-start: 0px;
+  padding-top: 0.5em;
+}
+
 /* ==== end cards learning page ==== */
+
+.div-table{
+	display: table;
+	/* width: 100%; */
+  grid-column: 2 / span 4;
+  align-self: start;
+}
+
+.table-row {
+	display: table-row;
+  grid-row: span 1;
+  text-align: center;
+}
+
+.table-cell {
+  border-bottom: 2px solid #ddd;
+	display: table-cell;
+	/* padding: 3px 10px; */
+}
+
+.table-cell.big {
+	width: 40%;
+  border-right: 1px solid #ddd;
+}
+
+.table-cell.small {
+	width: 20%;
+}
+
+
 
 .rotate {
   animation: rotation 1.2s infinite cubic-bezier(.72,.21,.4,.9);

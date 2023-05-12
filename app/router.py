@@ -60,8 +60,11 @@ async def read_deck(user_id: Annotated[str, Depends(get_current_user)], deck_id:
         {"$project": {"_id": 0, "deck": "$decks"}},
     ]
     deck = await db["users"].aggregate(pipeline).to_list(length=1)
-    deck = jsonable_encoder(deck[0]["deck"])
-    return JSONResponse(status_code=200, content=deck)
+    if deck:
+        deck = jsonable_encoder(deck[0]["deck"]) # 
+        return JSONResponse(status_code=200, content=deck)
+    raise HTTPException(status_code=404, detail=f"Deck {deck_id} not found")
+
 
 
 @router.post("/deck", response_description="Add new deck", response_model=Deck)
