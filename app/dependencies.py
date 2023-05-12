@@ -60,7 +60,9 @@ def get_password_hash(password):
 
 async def get_user(username: str):
     user = await db["users"].find_one({"username": username})
-    return User(**user)
+    if user:
+        return User(**user)
+    return None
 
 
 async def authenticate_user(username: str, password: str):

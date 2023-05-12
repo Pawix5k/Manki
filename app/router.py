@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse, FileResponse, Response
 from fastapi.security import OAuth2PasswordRequestForm
 
 from config import ACCESS_TOKEN_EXPIRE_MINUTES
-from dependencies import db, authenticate_user, create_access_token, get_current_user, create_update_query
+from dependencies import db, authenticate_user, create_access_token, get_current_user, create_update_query, get_password_hash
 from models import User, Token, Deck, Card
 
 
@@ -34,13 +34,27 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     return response
 
 
+# @router.post("/user", response_description="Add new user", response_model=User)
+# async def create_user(user: User = Body(...)):
+#     user = jsonable_encoder(user)
+#     new_user = await db["users"].insert_one(user)
+#     print(type(new_user.inserted_id))
+#     created_user = await db["users"].find_one({"_id": new_user.inserted_id})
+#     return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_user)
+
+
 @router.post("/user", response_description="Add new user", response_model=User)
-async def create_user(user: User = Body(...)):
-    user = jsonable_encoder(user)
-    new_user = await db["users"].insert_one(user)
-    print(type(new_user.inserted_id))
-    created_user = await db["users"].find_one({"_id": new_user.inserted_id})
-    return JSONResponse(status_code=status.HTTP_201_CREATED, content=created_user)
+async def register(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+    print(form_data.client_secret)
+    code = await db["codes"].find_one({"code": form_data.client_secret})
+    if code and not code.get("used"):
+        hashed_password = get_password_hash(form_data.password)
+        user = User(username=form_data.username, hashed_password=hashed_password)
+        user = jsonable_encoder(user)
+        new_user = await db["users"].insert_one(user)
+        return Response(status_code=204)
+    raise HTTPException(status_code=404, detail=f"Incorrect invite code")
+
 
 
 @router.delete("/deck/{deck_id}")
