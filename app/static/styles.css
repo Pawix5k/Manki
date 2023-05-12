@@ -396,7 +396,6 @@ dialog#waiting-modal>img {
 
 dialog#confirm-delete-dialog {
   position: fixed;
-  top: 50%;
 }
 
 .clickable {
