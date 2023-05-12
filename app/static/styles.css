@@ -420,6 +420,7 @@ dialog#confirm-delete-dialog {
   border: none;
   border-bottom: 2px solid #ddd;
   margin: 20px;
+  background-color: inherit;
 }
 
 input:focus {
@@ -430,11 +431,16 @@ input:focus {
 #app-container>form>input[type=submit] {
   /* width: 50%; */
   font-size: 2em;
-  font-family: "Poppins";
+  /* font-family: "Poppins"; */
   border: 2px solid #ddd;
   border-radius: 20px;
   /* border: none; */
-  background-color: transparent;
+  background-color: inherit;
+  color: black;
+}
+
+.dark-mode * #app-container>form>input[type=submit] {
+  color: white;
 }
 
 
