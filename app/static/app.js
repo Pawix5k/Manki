@@ -755,10 +755,10 @@ async function loadHomePage() {
 }
 
 function loadLoginPage() {
-    enableModal();
+    // enableModal();
     console.log("attempting to load login page");
     createLoginForm();
-    disableModal();
+    // disableModal();
 }
 
 async function loadCardsLearningPage(deck_id) {
