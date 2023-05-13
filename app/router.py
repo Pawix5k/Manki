@@ -57,6 +57,12 @@ async def register(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     raise HTTPException(status_code=404, detail=f"Incorrect invite code")
 
 
+@router.post("/logout")
+async def logout():
+    response = Response(status_code=200)
+    response.delete_cookie(key="access_token")
+    return response
+
 
 @router.delete("/deck/{deck_id}")
 async def delete_deck(user_id: Annotated[str, Depends(get_current_user)], deck_id: str):
