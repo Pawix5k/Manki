@@ -52,6 +52,7 @@ async def register(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
         user = User(username=form_data.username, hashed_password=hashed_password)
         user = jsonable_encoder(user)
         new_user = await db["users"].insert_one(user)
+        updated_code = await db["codes"].update_one({"code": form_data.client_secret}, {"$set": {"used": True}})
         return Response(status_code=204)
     raise HTTPException(status_code=404, detail=f"Incorrect invite code")
 
