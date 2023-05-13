@@ -737,10 +737,55 @@ function renderCardsLearningPage(currentDeck) {
 }
 
 // ================ END CARD LEARNING ================
+function loadDarkThemeButton() {
+    turnOffDarkMode();
+    let themeControlDiv = document.getElementById("theme-control");
+    let newThemeControlDiv = document.createElement("div");
+    newThemeControlDiv.setAttribute("id", "theme-control");
+    newThemeControlDiv.setAttribute("class", "clickable");
+    newThemeControlDiv.innerHTML = `
+        <div>
+            <span class="material-symbols-outlined size-48" style="font-size:36px;">dark_mode</span>
+        </div>
+        <div>
+            dark
+        </div>`;
+    newThemeControlDiv.addEventListener("click", function(e) {
+        e.preventDefault();
+        loadLightThemeButton();
+    });
+    themeControlDiv.replaceWith(newThemeControlDiv);
+}
 
-function toggleDarkMode() {
-    let element = document.body;
-    element.classList.toggle("dark-mode");
+function loadLightThemeButton() {
+    turnOnDarkMode();
+    let themeControlDiv = document.getElementById("theme-control");
+    let newThemeControlDiv = document.createElement("div");
+    newThemeControlDiv.setAttribute("id", "theme-control");
+    newThemeControlDiv.setAttribute("class", "clickable");
+    newThemeControlDiv.innerHTML = `
+        <div>
+            <span class="material-symbols-outlined size-48" style="font-size:36px;">light_mode</span>
+        </div>
+        <div>
+            light
+        </div>`;
+    newThemeControlDiv.addEventListener("click", function(e) {
+        e.preventDefault();
+        loadDarkThemeButton();
+    });
+    themeControlDiv.replaceWith(newThemeControlDiv);
+}
+
+function turnOnDarkMode() {
+    let body = document.body;
+    body.classList.add("dark-mode");
+}
+
+
+function turnOffDarkMode() {
+    let body = document.body;
+    body.classList.remove("dark-mode");
 }
 
 
@@ -795,4 +840,5 @@ var appContainer = document.getElementById("app-container");
 let rootUrl = "http://127.0.0.1:8000/";
 var decks = undefined;
 
+loadDarkThemeButton();
 loadHomePage();
