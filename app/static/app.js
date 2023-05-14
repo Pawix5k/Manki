@@ -634,14 +634,6 @@ function renderCardsLearningPage(currentDeck) {
                 <p>sync and go back</p>
             </div>
         </div>
-        <div id="list-view" class="clickable">
-            <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">list</span>
-            </div>
-            <div>
-                <p>list view</p>
-            </div>
-        </div>
         <div id="edit-card" class="clickable">
             <div>
                 <span class="material-symbols-outlined size-48" style="font-size:36px;">edit</span>
@@ -696,6 +688,11 @@ function renderCardsLearningPage(currentDeck) {
         </div>
     </div>`;
     appContainer.innerHTML = cardsLearningPageTemplate;
+
+    let backButton = document.getElementById("back");
+    backButton.addEventListener("click", function(e) {
+            loadHomePage();
+    });
 
     let editCardButton = document.getElementById("edit-card");
     editCardButton.addEventListener("click", function(e) {
