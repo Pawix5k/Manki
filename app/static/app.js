@@ -153,6 +153,17 @@ function sendLoginRequest() {
         });
 }
 
+async function sendRegisterRequest() {
+    var formElement = document.getElementById('register-form');
+    var data = new FormData(formElement);
+    var req = {
+        method: "POST",
+        body: data,
+    }
+    let response = await fetch(rootUrl + 'user', req)
+    loadLoginPage();
+}
+
 async function sendLogoutRequest() {
     var req = {
         method: "POST"
@@ -261,6 +272,26 @@ function createLoginForm() {
         e.preventDefault();
         enableModal();
         sendLoginRequest();
+        disableModal();
+    });
+}
+
+function createRegisterForm() {
+    let appContainer = document.getElementById("app-container");
+
+    let registerFormTemplate = `
+    <form id="register-form">
+        <input type="text" name="client_secret" id="invite-code-field" class="register-form-field" placeholder="Invite code">
+        <input type="text" name="username" id="username-field" class="register-form-field" placeholder="Username">
+        <input type="password" name="password" id="password-field" class="register-form-field" placeholder="Password">
+        <input type="submit" value="Register" id="login-form-submit">
+    </form>`;
+
+    appContainer.innerHTML = registerFormTemplate;
+    document.getElementById("register-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        enableModal();
+        sendRegisterRequest();
         disableModal();
     });
 }
@@ -853,6 +884,14 @@ function loadLoginPage() {
     console.log("attempting to load login page");
     createUserControlButton("register", register);
     createLoginForm();
+    // disableModal();
+}
+
+function loadRegisterPage() {
+    // enableModal();
+    console.log("attempting to load login page");
+    createUserControlButton("login", login);
+    createRegisterForm();
     // disableModal();
 }
 
