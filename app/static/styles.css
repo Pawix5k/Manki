@@ -335,6 +335,8 @@ p.learning-button {
 	/* width: 100%; */
   grid-column: 2 / span 4;
   align-self: start;
+  /* border: red solid 3px; */
+  border-left: 2px solid #bbb;
 }
 
 .table-row {
@@ -343,15 +345,25 @@ p.learning-button {
   text-align: center;
 }
 
-.table-cell {
+.table-cell,
+.table-head {
   border-bottom: 2px solid #bbb;
+  border-right: 2px solid #bbb;
 	display: table-cell;
+	/* padding: 3px 10px; */
+}
+
+.table-head {
+  border-top: 2px solid #bbb;
+	text-align: center;
+  font-weight: 600;
+  background-color: rgba(128, 128, 128, 0.2);
 	/* padding: 3px 10px; */
 }
 
 .table-cell.big {
 	width: 40%;
-  border-right: 1px solid #bbb;
+  /* border-right: 1px solid #bbb; */
 }
 
 .table-cell.small {

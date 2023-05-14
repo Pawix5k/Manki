@@ -514,13 +514,25 @@ function renderListView(deckData) {
     appContainer.innerHTML = "";
     let table = document.createElement("div");
     table.setAttribute("class", "div-table");
+    table.innerHTML = `
+        <div class="table-head big">question</div>
+        <div class="table-head big">answer</div>
+        <div class="table-head small">due</div>`;
     for (const card of deckData.cards) {
         let row = document.createElement('div');
         row.setAttribute("class", "table-row");
         cells = `
 			<div class="table-cell big">${card.question}</div>
 			<div class="table-cell big">${card.answer}</div>
-			<div class="table-cell small">${eta(card.date)}</div>`;
+			<div class="table-cell small">${eta(card.date)}</div>
+            <div style="display: flex;">
+                <div class="clickable">
+                    <span class="material-symbols-outlined size-48" style="font-size:24px;">edit</span>
+                </div>
+                <div class="clickable">
+                    <span class="material-symbols-outlined size-48" style="font-size:24px;">delete</span>
+                </div>
+            </div>`;
         row.innerHTML = cells;
         table.appendChild(row);
         // console.log(temp.firstChild);
