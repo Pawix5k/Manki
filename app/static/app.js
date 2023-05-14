@@ -511,7 +511,41 @@ function eta(date) {
 }
 
 function renderListView(deckData) {
-    appContainer.innerHTML = "";
+    appContainer.innerHTML = `
+    <div id="controls">
+        <div id="back" class="clickable">
+            <div>
+                <span class="material-symbols-outlined size-48" style="font-size:36px;">arrow_back_ios_new</span>
+            </div>
+            <div>
+                <p>go back</p>
+            </div>
+        </div>
+        <div id="add-new-card" class="clickable">
+            <div>
+                <span class="material-symbols-outlined size-48" style="font-size:36px;">add</span>
+            </div>
+            <div>
+                <p>add new card</p>
+            </div>
+        </div>
+    </div>`;
+    let backButton = document.getElementById("back");
+    backButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        loadHomePage();
+    });
+
+    let addNewCardButton = document.getElementById("add-new-card");
+    addNewCardButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        console.log(deckData);
+        const callback = () => {
+            return loadListView(deckData._id);
+        }
+        renderCreateCardForm(deckData._id, callback);
+    });
+
     let table = document.createElement("div");
     table.setAttribute("class", "div-table");
     table.innerHTML = `
