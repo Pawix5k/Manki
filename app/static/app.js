@@ -256,6 +256,19 @@ async function deleteDeck(deck_id) {
     return response
 }
 
+async function deleteCard(card_id) {
+    var req = {
+        method: "DELETE",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    }
+
+    const response = await fetch(rootUrl + 'card/' + card_id, req);
+    return response
+}
+
 function createLoginForm() {
     let appContainer = document.getElementById("app-container");
     appContainer.innerHTML = "";
@@ -296,7 +309,7 @@ function createRegisterForm() {
     });
 }
 
-function renderConfirmDeleteDialog(deck_id, msg) {
+function renderConfirmDeleteDialog(msg, callback) {
     let confirmDeleteDialog = document.getElementById("confirm-delete-dialog");
     confirmDeleteDialog.showModal();
 
@@ -316,13 +329,9 @@ function renderConfirmDeleteDialog(deck_id, msg) {
     });
 
     let confirmDialog = document.getElementById("confirm-dialog");
-    confirmDialog.addEventListener("click", async function(e) {
-        e.preventDefault();
-        enableModal();
-        await deleteDeck(deck_id);
-        disableModal();
+    confirmDialog.addEventListener("click", function(e) {
         confirmDeleteDialog.close();
-        loadHomePage();
+        callback();
     });
 }
 
@@ -361,8 +370,13 @@ function createDeckContainer(deckData) {
     let deleteDiv = deckContainer.getElementsByClassName("delete")[0];
     deleteDiv.addEventListener("click", function (e) {
         e.preventDefault();
-        console.log("dd")
-        renderConfirmDeleteDialog(deckId, "Confirm delete deck");
+        const callback = async () => {
+            e.preventDefault();
+            enableModal();
+            await deleteDeck(deckData._id);
+            disableModal();
+            loadHomePage();}
+        renderConfirmDeleteDialog("Confirm delete deck", callback);
     });
 
     let listDiv = deckContainer.getElementsByClassName("list")[0];
@@ -586,7 +600,7 @@ function renderListView(deckData) {
                 <div class="edit-card clickable">
                     <span class="material-symbols-outlined size-48" style="font-size:24px;">edit</span>
                 </div>
-                <div class="clickable">
+                <div class="delete-card clickable">
                     <span class="material-symbols-outlined size-48" style="font-size:24px;">delete</span>
                 </div>
             </div>`;
@@ -594,6 +608,17 @@ function renderListView(deckData) {
         let editCardDiv = row.getElementsByClassName("edit-card")[0];
         editCardDiv.addEventListener("click", function (e) {
             renderEditCardViewFromList(deckData._id, card);
+        });
+
+        let deleteCardDiv = row.getElementsByClassName("delete-card")[0];
+        deleteCardDiv.addEventListener("click", function (e) {
+            const callback = async () => {
+                enableModal();
+                await deleteCard(card._id);
+                disableModal();
+                loadListView(deckData._id);
+            };
+            renderConfirmDeleteDialog("confirm delete card", callback);
         });
 
         table.appendChild(row);
