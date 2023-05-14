@@ -345,10 +345,6 @@ function createDeckContainer(deckData) {
                     <div><span class="material-symbols-outlined size-48" style="font-size:36px;">list</span></div>
                     <div>list<br>view</div>
                 </div>
-                <div class="add-card clickable">
-                    <div><span class="material-symbols-outlined size-48" style="font-size:36px;">add</span></div>
-                    <div>add<br>cards</div>
-                </div>
             </div>
         </div>`;
     
@@ -374,12 +370,6 @@ function createDeckContainer(deckData) {
         e.preventDefault();
         console.log("clicking list-view")
         loadListView(deckId);
-    });
-
-    let addCardDiv = deckContainer.getElementsByClassName("add-card")[0];
-    addCardDiv.addEventListener("click", function (e) {
-        e.preventDefault();
-        renderCreateCardForm(deckId, loadHomePage);
     });
 
     return deckContainer
