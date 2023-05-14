@@ -10,7 +10,7 @@ from passlib.context import CryptContext
 import motor.motor_asyncio
 
 from config import SECRET_KEY, ALGORITHM, MONGODB_URL
-from models import User, TokenData, CardUpdateRequests
+from models import User, TokenData, CardUpdateRequests, Deck, Card
 
 
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGODB_URL)
@@ -117,3 +117,15 @@ def create_update_query(card_update_requests: CardUpdateRequests) -> dict:
         to_set[f"decks.$[deckfil].cards.$[cardfil{i}].last_interval"] = card_update.new_last_interval
         array_filters.append({f"cardfil{i}._id": card_update.card_id})
     return to_set, array_filters
+
+
+def get_sample_deck() -> Deck:
+    sample_cards = [
+        Card(question="flag", answer="flaga"),
+        Card(question="cricket", answer="świerszcz"),
+        Card(question="flock", answer="stado"),
+        Card(question="pulverize", answer="sproszkować"),
+        Card(question="prevarication", answer="krętactwo"),
+    ]
+    sample_deck = Deck(name= "Sample Deck 🇬🇧-🇵🇱", cards=sample_cards)
+    return sample_deck

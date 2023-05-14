@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse, FileResponse, Response
 from fastapi.security import OAuth2PasswordRequestForm
 
 from config import ACCESS_TOKEN_EXPIRE_MINUTES
-from dependencies import db, authenticate_user, create_access_token, get_current_user, create_update_query, get_password_hash
+from dependencies import db, authenticate_user, create_access_token, get_current_user, create_update_query, get_password_hash, get_sample_deck
 from models import User, Token, Deck, Card
 
 
@@ -49,7 +49,7 @@ async def register(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     code = await db["codes"].find_one({"code": form_data.client_secret})
     if code and not code.get("used"):
         hashed_password = get_password_hash(form_data.password)
-        user = User(username=form_data.username, hashed_password=hashed_password)
+        user = User(username=form_data.username, hashed_password=hashed_password, decks = [get_sample_deck()])
         user = jsonable_encoder(user)
         new_user = await db["users"].insert_one(user)
         updated_code = await db["codes"].update_one({"code": form_data.client_secret}, {"$set": {"used": True}})
