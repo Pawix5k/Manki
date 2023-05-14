@@ -130,9 +130,10 @@ p {
 /* ==== cards learning page ==== */
 
 #card-container {
+  margin-top: 50px;
   aspect-ratio: 5/7;
   grid-column: 3 / span 2;
-  align-self:flex-end;
+  /* align-self:flex-end; */
 }
 
 #buttons-div {
