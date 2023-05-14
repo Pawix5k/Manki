@@ -153,6 +153,15 @@ function sendLoginRequest() {
         });
 }
 
+async function sendLogoutRequest() {
+    var req = {
+        method: "POST"
+    }
+    response = await fetch(rootUrl + 'logout', req);
+    // data = await response.json();
+    return response
+}
+
 async function sendCreateDeckRequest() {
     var deckName = document.getElementById('deck-name-field').value;
     var data = {name: deckName}
@@ -369,6 +378,7 @@ function createCreateDeckContainer() {
 }
 
 function renderDecks(decks) {
+
     const appContainer = document.getElementById("app-container");
     appContainer.innerHTML = "";
     for (const [deck_id, deck] of Object.entries(decks)) {
@@ -777,6 +787,44 @@ function loadLightThemeButton() {
     themeControlDiv.replaceWith(newThemeControlDiv);
 }
 
+function createUserControlButton(action, callback) {
+    let symbolName = action;
+    if (symbolName == "register") {
+        symbolName = "app_registration";
+    }
+    let userControl = document.getElementById("user-control");
+    userControl.innerHTML = `
+    <div class="clickable">
+        <div>
+            <span class="material-symbols-outlined size-48" style="font-size:36px;">${symbolName}</span>
+        </div>
+        <div>
+            ${action}
+        </div>
+    </div>`;
+    userControl.firstElementChild.addEventListener("click", function(e) {
+        e.preventDefault();
+        callback();
+    });
+}
+
+const login = async () => {
+    console.log("login");
+    loadLoginPage();
+}
+
+const register = () => {
+    console.log("register");
+    loadRegisterPage();
+}
+
+const logout = async () => {
+    console.log("logout");
+    await sendLogoutRequest();
+    loadLoginPage();
+}
+
+
 function turnOnDarkMode() {
     let body = document.body;
     body.classList.add("dark-mode");
@@ -791,6 +839,7 @@ function turnOffDarkMode() {
 
 async function loadHomePage() {
     console.log("attempting to load decks");
+    createUserControlButton("logout", logout);
     enableModal();
     decks = await getUserDecks();
     disableModal();
@@ -802,6 +851,7 @@ async function loadHomePage() {
 function loadLoginPage() {
     // enableModal();
     console.log("attempting to load login page");
+    createUserControlButton("register", register);
     createLoginForm();
     // disableModal();
 }
