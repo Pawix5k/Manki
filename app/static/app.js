@@ -450,50 +450,38 @@ function renderCreateDeckForm() {
 
 function renderCreateCardForm(deck_id, callback) {
     const appContainer = document.getElementById("app-container");
-    appContainer.innerHTML = "";
+    appContainer.innerHTML = `
+    <div id="controls">
+        <div id="back" class="clickable">
+            <div>
+                <span class="material-symbols-outlined size-48" style="font-size:36px;">arrow_back_ios_new</span>
+            </div>
+            <div>
+                <p>go back</p>
+            </div>
+        </div>
+    </div>
+    <form id="create-card-form">
+        <input type="text" name="question" id="card-question-field" placeholder="question">
+        <input type="text" name="answer" id="card-answer-field" placeholder="answer">
+        <input type="submit" value="Create new card" id="create-new-card-form-submit">
+    </form>`;
 
-    let backButton = document.createElement("button");
-    backButton.setAttribute("type", "button");
-    backButton.innerHTML = "go back";
-    backButton.addEventListener("click", async function (e) {
+    let backButton = document.getElementById("back");
+    backButton.addEventListener("click", function (e) {
         e.preventDefault();
         callback();
     });
 
-    const createCardForm = document.createElement("form");
-    createCardForm.setAttribute("id", "create-card-form");
-
-    const cardQuestionField = document.createElement("input");
-    cardQuestionField.setAttribute("type", "text");
-    cardQuestionField.setAttribute("name", "question");
-    cardQuestionField.setAttribute("id", "card-question-field");
-    cardQuestionField.setAttribute("placeholder", "question");
-
-    const cardAnswerField = document.createElement("input");
-    cardAnswerField.setAttribute("type", "text");
-    cardAnswerField.setAttribute("name", "answer");
-    cardAnswerField.setAttribute("id", "card-answer-field");
-    cardAnswerField.setAttribute("placeholder", "answer");
-
-    const submitButton = document.createElement("input");
-    submitButton.setAttribute("type", "submit");
-    submitButton.setAttribute("value", "Create new card");
-    submitButton.setAttribute("id", "create-new-card-form-submit");
-
-    createCardForm.appendChild(cardQuestionField);
-    createCardForm.appendChild(cardAnswerField);
-    createCardForm.appendChild(submitButton);
+    let createCardForm = document.getElementById("create-card-form");
     createCardForm.addEventListener("submit", async function (e) {
         e.preventDefault();
         enableModal();
         await sendCreateCardRequest(deck_id);
         disableModal();
-        cardQuestionField.value = "";
-        cardAnswerField.value = "";
+        this.question.value = "";
+        this.answer.value = "";
     });
-
-    appContainer.appendChild(backButton);
-    appContainer.appendChild(createCardForm);
 }
 
 function eta(date) {
