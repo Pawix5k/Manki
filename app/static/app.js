@@ -488,6 +488,51 @@ function eta(date) {
     return "now"
 }
 
+function renderEditCardViewFromList(deckId, cardData) {
+    let oldQuestion = cardData.question;
+    let oldAnswer = cardData.answer;
+    appContainer.innerHTML = `
+    <div id="controls">
+        <div id="back" class="clickable">
+            <div>
+                <span class="material-symbols-outlined size-48" style="font-size:36px;">arrow_back_ios_new</span>
+            </div>
+            <div>
+                <p>go back</p>
+            </div>
+        </div>
+    </div>
+    <form id="edit-card-form">
+        <input type="text" name="question" id="card-question-field" placeholder="question" value="${oldQuestion}">
+        <input type="text" name="answer" id="card-answer-field" placeholder="answer" value="${oldAnswer}">
+        <input type="submit" value="Edit card" id="edit-card-form-submit">
+    </form>`;
+
+    let editCardForm = document.getElementById("edit-card-form")
+    editCardForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        let newQuestion = this.question.value;
+        let newAnswer = this.answer.value;
+        let updates = {
+            "deck_id": deckId,
+            "requests": [
+                {
+                    "card_id": cardData._id,
+                    "new_question": newQuestion,
+                    "new_answer": newAnswer,
+                    "new_date": cardData.date,
+                    "new_last_was_wrong": cardData.last_was_wrong,
+                    "new_last_interval": cardData.last_interval
+                }
+            ]
+        }
+        updates = JSON.stringify(updates);
+        await sendDeckUpdates(updates);
+        console.log(updates);
+        loadListView(deckId);
+    });
+}
+
 function renderListView(deckData) {
     appContainer.innerHTML = `
     <div id="controls">
@@ -538,7 +583,7 @@ function renderListView(deckData) {
 			<div class="table-cell big">${card.answer}</div>
 			<div class="table-cell small">${eta(card.date)}</div>
             <div style="display: flex;">
-                <div class="clickable">
+                <div class="edit-card clickable">
                     <span class="material-symbols-outlined size-48" style="font-size:24px;">edit</span>
                 </div>
                 <div class="clickable">
@@ -546,6 +591,11 @@ function renderListView(deckData) {
                 </div>
             </div>`;
         row.innerHTML = cells;
+        let editCardDiv = row.getElementsByClassName("edit-card")[0];
+        editCardDiv.addEventListener("click", function (e) {
+            renderEditCardViewFromList(deckData._id, card);
+        });
+
         table.appendChild(row);
         // console.log(temp.firstChild);
     }
@@ -557,7 +607,7 @@ function renderListView(deckData) {
 
 // ================ CARD LEARNING ================
 
-function renderEditCardView(currentDeck) {
+function renderEditCardViewFromLearning(currentDeck) {
     let currentCard = currentDeck.getTopCard();
     let oldQuestion = currentCard.question;
     let oldAnswer = currentCard.answer;
@@ -722,7 +772,7 @@ function renderCardsLearningPage(currentDeck) {
     editCardButton.addEventListener("click", function(e) {
         if (!currentDeck.isQueueEmpty()) {
             console.log(currentDeck.getTopCard());
-            renderEditCardView(currentDeck);
+            renderEditCardViewFromLearning(currentDeck);
         }
     });
 
