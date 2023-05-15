@@ -99,7 +99,7 @@ class CurrentDeck {
         if (numberOfDays == 1) {
             return "1 day"
         }
-        return "${numberOfDays} days"
+        return `${numberOfDays} days`
     }
 
     isQueueEmpty () {
@@ -498,8 +498,14 @@ function renderCreateCardForm(deck_id, callback) {
     });
 }
 
-function eta(date) {
-    return "now"
+function getEta(date) {
+    let now = Date.now();
+    date = Date.parse(date);
+    let difference = date - now;
+    if (difference < 0) return "now";
+    let days = Math.floor(difference / (24 * 60 * 60 * 1000));
+    if (days < 0) return "< 1 day";
+    return `${days} days`;
 }
 
 function renderEditCardViewFromList(deckId, cardData) {
@@ -595,7 +601,7 @@ function renderListView(deckData) {
         cells = `
 			<div class="table-cell big">${card.question}</div>
 			<div class="table-cell big">${card.answer}</div>
-			<div class="table-cell small">${eta(card.date)}</div>
+			<div class="table-cell small">${getEta(card.date)}</div>
             <div style="display: flex;">
                 <div class="edit-card clickable">
                     <span class="material-symbols-outlined size-48" style="font-size:24px;">edit</span>
@@ -798,6 +804,19 @@ function renderCardsLearningPage(currentDeck) {
         if (!currentDeck.isQueueEmpty()) {
             console.log(currentDeck.getTopCard());
             renderEditCardViewFromLearning(currentDeck);
+        }
+    });
+
+    let deleteCardButton = document.getElementById("remove-card");
+    deleteCardButton.addEventListener("click", function(e) {
+        if (!currentDeck.isQueueEmpty()) {
+            let topCard = currentDeck.getTopCard();
+            const callback = async () => {
+                await sendDeckUpdates(currentDeck.buildDeckUpdateRequestBody());
+                await deleteCard(topCard._id);
+                loadCardsLearningPage(currentDeck.deck._id);
+            }
+            renderConfirmDeleteDialog("confirm delete card", callback);
         }
     });
 
