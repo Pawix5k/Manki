@@ -223,9 +223,16 @@ async function getDeck(deck_id) {
         }
     }
 
-    const response = await fetch(rootUrl + "decks/" + deck_id, req);
-    const deckData = await response.json();
-    return deckData
+    const response = await fetch(rootUrl + "decks/" + "f", req);
+    if (response.ok) {
+        const deckData = await response.json();
+        return deckData
+    }
+    else {
+        let msg = await response.json();
+        console.log(msg.detail);
+        openMessageDialog(msg.detail);
+    }
 }
 
 async function sendDeckUpdates(updates) {
@@ -266,7 +273,7 @@ async function deleteCard(card_id) {
         }
     }
 
-    const response = await fetch(rootUrl + 'cards/' + card_id, req);
+    let response = await fetch(rootUrl + 'cards/' + card_id, req);
     return response
 }
 
@@ -424,43 +431,73 @@ function renderDecks(decks) {
 }
 
 function renderCreateDeckForm() {
-    console.log(decks);
+    appContainer.innerHTML = `
+    <div id="controls">
+        <div id="back" class="clickable">
+            <div>
+                <span class="material-symbols-outlined size-48" style="font-size:36px;">arrow_back_ios_new</span>
+            </div>
+            <div>
+                <p>go back</p>
+            </div>
+        </div>
+    </div>
+    <form id="create-deck-form">
+        <input type="text" name="name" id="deck-name-field" placeholder="name" class="create-deck-form-field">
+        <input type="submit" value="create new deck" id="create-new-deck-form-submit">
+    </form>`;
 
-    const appContainer = document.getElementById("app-container");
-    appContainer.innerHTML = "";
-
-    let backButton = document.createElement("button");
-    backButton.setAttribute("type", "button");
-    backButton.innerHTML = "go back";
-    backButton.addEventListener("click", async function (e) {
+    let backButton = document.getElementById("back");
+    backButton.addEventListener("click", function (e) {
         e.preventDefault();
         loadHomePage();
     });
 
-    const createDeckForm = document.createElement("form");
-    createDeckForm.setAttribute("id", "create-deck-form");
-
-    const deckNameField = document.createElement("input");
-    deckNameField.setAttribute("type", "text");
-    deckNameField.setAttribute("name", "name");
-    deckNameField.setAttribute("id", "deck-name-field");
-    deckNameField.setAttribute("class", "create-deck-form-field");
-    deckNameField.setAttribute("placeholder", "Deck name");
-
-    const submitButton = document.createElement("input");
-    submitButton.setAttribute("type", "submit");
-    submitButton.setAttribute("value", "Create new deck");
-    submitButton.setAttribute("id", "create-new-deck-form-submit");
-
-    createDeckForm.appendChild(deckNameField);
-    createDeckForm.appendChild(submitButton);
-    createDeckForm.addEventListener("submit", function (e) {
+    let createDeckForm = document.getElementById("create-deck-form");
+    createDeckForm.addEventListener("submit", async function (e) {
         e.preventDefault();
         sendCreateDeckRequest();
     });
 
-    appContainer.appendChild(backButton);
-    appContainer.appendChild(createDeckForm);
+
+
+    // console.log(decks);
+
+    // const appContainer = document.getElementById("app-container");
+    // appContainer.innerHTML = "";
+
+    // let backButton = document.createElement("button");
+    // backButton.setAttribute("type", "button");
+    // backButton.innerHTML = "go back";
+    // backButton.addEventListener("click", async function (e) {
+    //     e.preventDefault();
+    //     loadHomePage();
+    // });
+
+    // const createDeckForm = document.createElement("form");
+    // createDeckForm.setAttribute("id", "create-deck-form");
+
+    // const deckNameField = document.createElement("input");
+    // deckNameField.setAttribute("type", "text");
+    // deckNameField.setAttribute("name", "name");
+    // deckNameField.setAttribute("id", "deck-name-field");
+    // deckNameField.setAttribute("class", "create-deck-form-field");
+    // deckNameField.setAttribute("placeholder", "Deck name");
+
+    // const submitButton = document.createElement("input");
+    // submitButton.setAttribute("type", "submit");
+    // submitButton.setAttribute("value", "Create new deck");
+    // submitButton.setAttribute("id", "create-new-deck-form-submit");
+
+    // createDeckForm.appendChild(deckNameField);
+    // createDeckForm.appendChild(submitButton);
+    // createDeckForm.addEventListener("submit", function (e) {
+    //     e.preventDefault();
+    //     sendCreateDeckRequest();
+    // });
+
+    // appContainer.appendChild(backButton);
+    // appContainer.appendChild(createDeckForm);
 }
 
 function renderCreateCardForm(deck_id, callback) {
@@ -1016,9 +1053,11 @@ async function loadCardsLearningPage(deck_id) {
     enableModal();
     let deckData = await getDeck(deck_id);
     disableModal();
-    let currentDeck = new CurrentDeck(deckData);
-    console.log(JSON.stringify(currentDeck));
-    renderCardsLearningPage(currentDeck);
+    if (deckData) {
+        let currentDeck = new CurrentDeck(deckData);
+        renderCardsLearningPage(currentDeck);
+    }
+    // console.log(JSON.stringify(currentDeck));
 }
 
 function enableModal() {
@@ -1040,6 +1079,22 @@ async function loadListView(deckId) {
     let deckData = await getDeck(deckId);
     disableModal();
     renderListView(deckData);
+}
+
+function openMessageDialog(msg) {
+    console.log("here");
+    let dialog = document.getElementById("confirm-delete-dialog");
+    dialog.innerHTML = `
+    <h2>${msg}</h2>
+    <div>
+        <button id="close-dialog">back</button>
+    </div>`;
+    let closeDialog = document.getElementById("close-dialog");
+    closeDialog.addEventListener("click", function(e) {
+        e.preventDefault();
+        dialog.close();
+    });
+    dialog.showModal();
 }
 
 var appContainer = document.getElementById("app-container");
