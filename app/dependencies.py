@@ -105,7 +105,9 @@ async def get_current_user(access_token: Annotated[str, Depends(oauth2_scheme)])
     return str(user.id)
 
 
-def create_update_query(card_update_requests: CardUpdateRequests) -> dict:
+def create_update_query(card_update_requests: CardUpdateRequests) -> dict | None:
+    if len(card_update_requests.requests) == 0:
+        return None
     to_set = {}
     array_filters = [{"deckfil._id": card_update_requests.deck_id}]
     for i, card_update in enumerate(card_update_requests.requests):

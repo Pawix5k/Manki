@@ -187,13 +187,13 @@ async function sendCreateDeckRequest() {
     }
 
     const response = await fetch(rootUrl + 'decks', req);
-    data = await response.json();
-    let newDecks = {}
-    data.decks.forEach(deck => {
-        newDecks[deck._id] = deck;
-    });
-    decks = newDecks;
-    console.log(data);
+    // data = await response.json();
+    // let newDecks = {}
+    // data.decks.forEach(deck => {
+    //     newDecks[deck._id] = deck;
+    // });
+    // decks = newDecks;
+    // console.log(data);
     loadHomePage();
 }
 
@@ -229,6 +229,7 @@ async function getDeck(deck_id) {
 }
 
 async function sendDeckUpdates(updates) {
+    console.log(updates)
     var req = {
         method: "PUT",
         headers: {
@@ -239,8 +240,8 @@ async function sendDeckUpdates(updates) {
     }
 
     const response = await fetch(rootUrl + 'decks', req);
-    data = await response.json();
-    return data
+    // data = await response.json();
+    // return data
 }
 
 async function deleteDeck(deck_id) {

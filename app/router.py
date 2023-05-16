@@ -137,6 +137,8 @@ async def create_card(user_id: Annotated[str, Depends(get_current_user)], deck_i
 
 @router.put("/decks")
 async def update_cards(user_id: Annotated[str, Depends(get_current_user)], update_dicts: Annotated[tuple, Depends(create_update_query)]):
+    if not update_dicts:
+        return Response(status_code=204)
     to_set, array_filters = update_dicts
     filter_ = {"_id": user_id}
     update = {"$set": to_set}
