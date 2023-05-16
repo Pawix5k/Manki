@@ -186,7 +186,7 @@ async function sendCreateDeckRequest() {
         body: data,
     }
 
-    const response = await fetch(rootUrl + 'deck', req);
+    const response = await fetch(rootUrl + 'decks', req);
     data = await response.json();
     let newDecks = {}
     data.decks.forEach(deck => {
@@ -211,7 +211,7 @@ async function sendCreateCardRequest(deck_id) {
         body: data,
     }
 
-    const response = await fetch(rootUrl + 'card/' + deck_id, req);
+    const response = await fetch(rootUrl + 'cards/' + deck_id, req);
 }
 
 async function getDeck(deck_id) {
@@ -223,14 +223,14 @@ async function getDeck(deck_id) {
         }
     }
 
-    const response = await fetch(rootUrl + "deck/" + deck_id, req);
+    const response = await fetch(rootUrl + "decks/" + deck_id, req);
     const deckData = await response.json();
     return deckData
 }
 
 async function sendDeckUpdates(updates) {
     var req = {
-        method: "POST",
+        method: "PUT",
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -238,7 +238,7 @@ async function sendDeckUpdates(updates) {
         body: updates,
     }
 
-    const response = await fetch(rootUrl + 'deck_update', req);
+    const response = await fetch(rootUrl + 'decks', req);
     data = await response.json();
     return data
 }
@@ -252,7 +252,7 @@ async function deleteDeck(deck_id) {
         }
     }
 
-    const response = await fetch(rootUrl + 'deck/' + deck_id, req);
+    const response = await fetch(rootUrl + 'decks/' + deck_id, req);
     return response
 }
 
@@ -265,7 +265,7 @@ async function deleteCard(card_id) {
         }
     }
 
-    const response = await fetch(rootUrl + 'card/' + card_id, req);
+    const response = await fetch(rootUrl + 'cards/' + card_id, req);
     return response
 }
 
