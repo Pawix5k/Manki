@@ -7,7 +7,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, FileResponse, Response
 from fastapi.security import OAuth2PasswordRequestForm
 
-from config import ACCESS_TOKEN_EXPIRE_MINUTES
+from config import ACCESS_TOKEN_EXPIRE_MINUTES, NUMBER_OF_CARDS_LIMIT, NUMBER_OF_DECKS_LIMIT
 from dependencies import db, authenticate_user, create_access_token, get_current_user, create_update_query, get_password_hash, get_sample_deck
 from models import User, Token, Deck, Card, CardRequest, DeckRequest
 
@@ -53,7 +53,6 @@ async def register(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     return Response(status_code=204)
     
 
-
 @router.post("/logout")
 async def logout():
     response = Response(status_code=204)
@@ -87,6 +86,15 @@ async def read_deck(user_id: Annotated[str, Depends(get_current_user)], deck_id:
 
 @router.post("/decks")
 async def create_deck(user_id: Annotated[str, Depends(get_current_user)], deck_request: DeckRequest = Body(...)):
+    pipeline = [
+        {"$match": {"_id": user_id}},
+        {"$project": {"_id": 0, "numberOfDecks": {"$size": "$decks"}}},
+    ]
+    numbers_of_decks = await db["users"].aggregate(pipeline).to_list(length=1)
+    number_of_decks = numbers_of_decks[0]["numberOfDecks"]
+    if number_of_decks >= NUMBER_OF_DECKS_LIMIT:
+        raise HTTPException(status_code=403, detail=f"Limit of number of decks reached")
+    
     deck = Deck(**deck_request.dict())
     deck = jsonable_encoder(deck)
     await db["users"].update_one({'_id': user_id}, {"$push" : {"decks" : deck} })
@@ -103,7 +111,19 @@ async def delete_deck(user_id: Annotated[str, Depends(get_current_user)], deck_i
 
 @router.post("/cards/{deck_id}")
 async def create_card(user_id: Annotated[str, Depends(get_current_user)], deck_id: str, card_request: CardRequest = Body(...)):
-    # TODO check if limit reached also applies to decks
+    pipeline = [
+        {"$match": {"_id": user_id}},
+        {"$unwind": "$decks"},
+        {"$match": {"decks._id": deck_id}},
+        {"$project": {"_id": 0, "numberOfCards": {"$size": "$decks.cards"}}}
+    ]
+    numbers_of_cards = await db["users"].aggregate(pipeline).to_list(length=1)
+    number_of_cards = numbers_of_cards[0]["numberOfCards"]
+    if number_of_cards is None:
+        raise HTTPException(status_code=404, detail=f"Something went wrong")
+    if number_of_cards >= NUMBER_OF_CARDS_LIMIT:
+        raise HTTPException(status_code=403, detail=f"Limit of number of cards in this deck reached")
+
     card = Card(**card_request.dict())
     card = jsonable_encoder(card)
     fil = {"_id": user_id}
