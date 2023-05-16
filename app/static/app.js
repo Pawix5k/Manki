@@ -505,7 +505,8 @@ function getEta(date) {
     if (difference < 0) return "now";
     let days = Math.floor(difference / (24 * 60 * 60 * 1000));
     if (days < 0) return "< 1 day";
-    return `${days} days`;
+    if (days == 1) return "1 day+";
+    return `${days} days+`;
 }
 
 function renderEditCardViewFromList(deckId, cardData) {
