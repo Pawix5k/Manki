@@ -9,7 +9,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from config import ACCESS_TOKEN_EXPIRE_MINUTES
 from dependencies import db, authenticate_user, create_access_token, get_current_user, create_update_query, get_password_hash, get_sample_deck
-from models import User, Token, Deck, Card
+from models import User, Token, Deck, Card, CardRequest, DeckRequest
 
 
 router = APIRouter()
@@ -86,7 +86,8 @@ async def read_deck(user_id: Annotated[str, Depends(get_current_user)], deck_id:
 
 
 @router.post("/decks")
-async def create_deck(user_id: Annotated[str, Depends(get_current_user)], deck: Deck = Body(...)):
+async def create_deck(user_id: Annotated[str, Depends(get_current_user)], deck_request: DeckRequest = Body(...)):
+    deck = Deck(**deck_request.dict())
     deck = jsonable_encoder(deck)
     await db["users"].update_one({'_id': user_id}, {"$push" : {"decks" : deck} })
     return Response(status_code=201)
@@ -101,9 +102,9 @@ async def delete_deck(user_id: Annotated[str, Depends(get_current_user)], deck_i
 
 
 @router.post("/cards/{deck_id}")
-async def create_card(user_id: Annotated[str, Depends(get_current_user)], deck_id: str, card: Card = Body(...)):
-    # TODO Add model for CardRequest and utilize it, also applies to create deck and user
+async def create_card(user_id: Annotated[str, Depends(get_current_user)], deck_id: str, card_request: CardRequest = Body(...)):
     # TODO check if limit reached also applies to decks
+    card = Card(**card_request.dict())
     card = jsonable_encoder(card)
     fil = {"_id": user_id}
     update = {"$push": {"decks.$[deck].cards": card}}

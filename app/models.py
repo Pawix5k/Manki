@@ -60,6 +60,11 @@ class Card(BaseModel):
         }
 
 
+class CardRequest(BaseModel):
+    question: str = Field(...)
+    answer: str = Field(...)
+
+
 class Deck(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     name: str = Field(...)
@@ -74,6 +79,10 @@ class Deck(BaseModel):
                 "name": "english 101",
             }
         }
+
+
+class DeckRequest(BaseModel):
+    name: str = Field(...)
 
 
 class User(BaseModel):
