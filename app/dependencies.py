@@ -102,11 +102,12 @@ async def get_current_user(access_token: Annotated[str, Depends(oauth2_scheme)])
     user = await get_user(username=token_data.username)
     if user is None:
         raise credentials_exception
-    print(user.id)
     return str(user.id)
 
 
-def create_update_query(card_update_requests: CardUpdateRequests) -> dict:
+def create_update_query(card_update_requests: CardUpdateRequests) -> dict | None:
+    if len(card_update_requests.requests) == 0:
+        return None
     to_set = {}
     array_filters = [{"deckfil._id": card_update_requests.deck_id}]
     for i, card_update in enumerate(card_update_requests.requests):
@@ -129,49 +130,3 @@ def get_sample_deck() -> Deck:
     ]
     sample_deck = Deck(name= "Sample Deck 🇬🇧-🇵🇱", cards=sample_cards)
     return sample_deck
-
-
-# get number of decks query:
-
-# db.collection.aggregate([
-#   {
-#     $match: {
-#       _id: "6450e3860b3ca7fa4e74a98d"
-#     }
-#   },
-#   {
-#     $project: {
-#       _id: 0,
-#       numberOfDecks: {
-#         $size: "$decks"
-#       }
-#     }
-#   }
-# ])
-
-
-# get number of cards query:
-
-# db.collection.aggregate([
-#   {
-#     $match: {
-#       _id: "6450e3860b3ca7fa4e74a98d"
-#     }
-#   },
-#   {
-#     $unwind: "$decks"
-#   },
-#   {
-#     $match: {
-#       "decks._id": "645aa3e85c7f23a17a5b14f6"
-#     }
-#   },
-#   {
-#     $project: {
-#       _id: 0,
-#       numberOfCards: {
-#         $size: "$decks.cards"
-#       }
-#     }
-#   }
-# ])
