@@ -458,46 +458,6 @@ function renderCreateDeckForm() {
         e.preventDefault();
         sendCreateDeckRequest();
     });
-
-
-
-    // console.log(decks);
-
-    // const appContainer = document.getElementById("app-container");
-    // appContainer.innerHTML = "";
-
-    // let backButton = document.createElement("button");
-    // backButton.setAttribute("type", "button");
-    // backButton.innerHTML = "go back";
-    // backButton.addEventListener("click", async function (e) {
-    //     e.preventDefault();
-    //     loadHomePage();
-    // });
-
-    // const createDeckForm = document.createElement("form");
-    // createDeckForm.setAttribute("id", "create-deck-form");
-
-    // const deckNameField = document.createElement("input");
-    // deckNameField.setAttribute("type", "text");
-    // deckNameField.setAttribute("name", "name");
-    // deckNameField.setAttribute("id", "deck-name-field");
-    // deckNameField.setAttribute("class", "create-deck-form-field");
-    // deckNameField.setAttribute("placeholder", "Deck name");
-
-    // const submitButton = document.createElement("input");
-    // submitButton.setAttribute("type", "submit");
-    // submitButton.setAttribute("value", "Create new deck");
-    // submitButton.setAttribute("id", "create-new-deck-form-submit");
-
-    // createDeckForm.appendChild(deckNameField);
-    // createDeckForm.appendChild(submitButton);
-    // createDeckForm.addEventListener("submit", function (e) {
-    //     e.preventDefault();
-    //     sendCreateDeckRequest();
-    // });
-
-    // appContainer.appendChild(backButton);
-    // appContainer.appendChild(createDeckForm);
 }
 
 function renderCreateCardForm(deck_id, callback) {
