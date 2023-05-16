@@ -118,6 +118,8 @@ async def create_card(user_id: Annotated[str, Depends(get_current_user)], deck_i
         {"$project": {"_id": 0, "numberOfCards": {"$size": "$decks.cards"}}}
     ]
     numbers_of_cards = await db["users"].aggregate(pipeline).to_list(length=1)
+    if not numbers_of_cards:
+        raise HTTPException(status_code=404, detail=f"No deck matching")
     number_of_cards = numbers_of_cards[0]["numberOfCards"]
     if number_of_cards is None:
         raise HTTPException(status_code=404, detail=f"Something went wrong")
@@ -156,7 +158,7 @@ async def delete_card(user_id: Annotated[str, Depends(get_current_user)], card_i
     })
     if result.modified_count == 1:
         return Response(status_code=204)
-    raise HTTPException(status_code=404, detail=f"Deck {card_id} not found")
+    raise HTTPException(status_code=404, detail=f"Card {card_id} not found")
 
 
 @router.get("/")

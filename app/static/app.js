@@ -131,6 +131,7 @@ async function getUserDecks() {
 function sendLoginRequest() {
     var formElement = document.getElementById('login-form');
     var data = new FormData(formElement);
+    console.log(data);
     var req = {
         method: "POST",
         body: data,
@@ -181,7 +182,7 @@ async function sendCreateDeckRequest() {
         method: "POST",
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/json'
         },
         body: data,
     }
@@ -197,21 +198,22 @@ async function sendCreateDeckRequest() {
     loadHomePage();
 }
 
-async function sendCreateCardRequest(deck_id) {
-    var question = document.getElementById('card-question-field').value;
-    var answer = document.getElementById('card-answer-field').value;
-    var data = {"question": question, "answer": answer}
-    data = JSON.stringify(data);
+async function sendCreateCardRequest(deck_id, requestBody) {
+    console.log(requestBody);
     var req = {
         method: "POST",
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: data,
+        body: requestBody,
     }
-
     const response = await fetch(rootUrl + 'cards/' + deck_id, req);
+    if (response.ok) {
+        return response
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
 async function getDeck(deck_id) {
@@ -222,17 +224,13 @@ async function getDeck(deck_id) {
             'Content-Type': 'application/json'
         }
     }
-
-    const response = await fetch(rootUrl + "decks/" + "f", req);
+    const response = await fetch(rootUrl + "decks/" + deck_id, req);
     if (response.ok) {
         const deckData = await response.json();
         return deckData
     }
-    else {
-        let msg = await response.json();
-        console.log(msg.detail);
-        openMessageDialog(msg.detail);
-    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
 async function sendDeckUpdates(updates) {
@@ -245,10 +243,12 @@ async function sendDeckUpdates(updates) {
         },
         body: updates,
     }
-
     const response = await fetch(rootUrl + 'decks', req);
-    // data = await response.json();
-    // return data
+    if (response.ok) {
+        return response
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
 async function deleteDeck(deck_id) {
@@ -259,9 +259,12 @@ async function deleteDeck(deck_id) {
             'Content-Type': 'application/json'
         }
     }
-
     const response = await fetch(rootUrl + 'decks/' + deck_id, req);
-    return response
+    if (response.ok) {
+        return response
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
 async function deleteCard(card_id) {
@@ -272,9 +275,12 @@ async function deleteCard(card_id) {
             'Content-Type': 'application/json'
         }
     }
-
-    let response = await fetch(rootUrl + 'cards/' + card_id, req);
-    return response
+    const response = await fetch(rootUrl + 'cards/' + card_id, req);
+    if (response.ok) {
+        return response
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
 function createLoginForm() {
@@ -486,13 +492,10 @@ function renderCreateCardForm(deck_id, callback) {
     });
 
     let createCardForm = document.getElementById("create-card-form");
+    
     createCardForm.addEventListener("submit", async function (e) {
         e.preventDefault();
-        enableModal();
-        await sendCreateCardRequest(deck_id);
-        disableModal();
-        this.question.value = "";
-        this.answer.value = "";
+        await manageCreateCard(deck_id, createCardForm);
     });
 }
 
@@ -502,7 +505,7 @@ function getEta(date) {
     let difference = date - now;
     if (difference < 0) return "now";
     let days = Math.floor(difference / (24 * 60 * 60 * 1000));
-    if (days < 0) return "< 1 day";
+    if (days == 0) return "< 1 day";
     if (days == 1) return "1 day+";
     return `${days} days+`;
 }
@@ -981,6 +984,23 @@ function turnOffDarkMode() {
     body.classList.remove("dark-mode");
 }
 
+function JSONFromFormData(form) {
+    formData = new FormData(form);
+    var JSONObject = {};
+    formData.forEach((value, key) => JSONObject[key] = value);
+    return JSON.stringify(JSONObject)
+}
+
+async function manageCreateCard(deck_id, createCardForm) {
+    let requestBody = JSONFromFormData(createCardForm)
+    enableModal();
+    let response = await sendCreateCardRequest(deck_id, requestBody);
+    disableModal();
+    if (response) {
+        createCardForm.question.value = "";
+        createCardForm.answer.value = "";
+    }
+}
 
 async function loadHomePage() {
     console.log("attempting to load decks");
