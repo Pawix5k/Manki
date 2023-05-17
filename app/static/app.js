@@ -285,7 +285,6 @@ function createRegisterForm() {
     </form>`;
 
     appContainer.innerHTML = registerFormTemplate;
-    let form = document.getElementById("register-form");
     document.getElementById("register-form").addEventListener("submit", async function (e) {
         e.preventDefault();
         await manageRegisterRequest(this);
@@ -426,10 +425,9 @@ function renderCreateDeckForm() {
         loadHomePage();
     });
 
-    let createDeckForm = document.getElementById("create-deck-form");
-    createDeckForm.addEventListener("submit", async function (e) {
+    document.getElementById("create-deck-form").addEventListener("submit", async function (e) {
         e.preventDefault();
-        await manageCreateDeck(createDeckForm);
+        await manageCreateDeck(this);
     });
 }
 
@@ -457,12 +455,10 @@ function renderCreateCardForm(deck_id, callback) {
         e.preventDefault();
         callback();
     });
-
-    let createCardForm = document.getElementById("create-card-form");
     
-    createCardForm.addEventListener("submit", async function (e) {
+    document.getElementById("create-card-form").addEventListener("submit", async function (e) {
         e.preventDefault();
-        await manageCreateCard(deck_id, createCardForm);
+        await manageCreateCard(deck_id, this);
     });
 }
 
@@ -497,27 +493,9 @@ function renderEditCardViewFromList(deckId, cardData) {
         <input type="submit" value="Edit card" id="edit-card-form-submit">
     </form>`;
 
-    let editCardForm = document.getElementById("edit-card-form")
-    editCardForm.addEventListener("submit", async function (e) {
+    document.getElementById("edit-card-form").addEventListener("submit", async function (e) {
         e.preventDefault();
-        let newQuestion = this.question.value;
-        let newAnswer = this.answer.value;
-        let updates = {
-            "deck_id": deckId,
-            "requests": [
-                {
-                    "card_id": cardData._id,
-                    "new_question": newQuestion,
-                    "new_answer": newAnswer,
-                    "new_date": cardData.date,
-                    "new_last_was_wrong": cardData.last_was_wrong,
-                    "new_last_interval": cardData.last_interval
-                }
-            ]
-        }
-        updates = JSON.stringify(updates);
-        await sendDeckUpdates(updates);
-        loadListView(deckId);
+        await manageUpdateCardFromListView(this, cardData, deckId);
     });
 }
 
@@ -970,6 +948,31 @@ async function manageRegisterRequest(form) {
     disableModal();
     if (response){
         loadLoginPage();
+    }
+}
+
+async function manageUpdateCardFromListView(form, cardData, deckId) {
+    let newQuestion = form.question.value;
+    let newAnswer = form.answer.value;
+    let updates = {
+        "deck_id": deckId,
+        "requests": [
+            {
+                "card_id": cardData._id,
+                "new_question": newQuestion,
+                "new_answer": newAnswer,
+                "new_date": cardData.date,
+                "new_last_was_wrong": cardData.last_was_wrong,
+                "new_last_interval": cardData.last_interval
+            }
+        ]
+    }
+    updates = JSON.stringify(updates);
+    enableModal();
+    let response = await sendDeckUpdates(updates);
+    disableModal();
+    if (response) {
+        loadListView(deckId);
     }
 }
 
