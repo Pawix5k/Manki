@@ -1,18 +1,7 @@
 from __future__ import annotations
 
 from bson import ObjectId
-from pydantic import BaseModel, Field
-
-
-# class User(BaseModel):
-#     username: str
-#     email: str | None = None
-#     full_name: str | None = None
-#     disabled: bool | None = None
-
-
-# class UserInDB(User):
-#     hashed_password: str
+from pydantic import BaseModel, Field, conlist
 
 
 class PyObjectId(ObjectId):
@@ -61,8 +50,8 @@ class Card(BaseModel):
 
 
 class CardRequest(BaseModel):
-    question: str = Field(...)
-    answer: str = Field(...)
+    question: str = Field(..., max_length=64)
+    answer: str = Field(..., max_length=64)
 
 
 class Deck(BaseModel):
@@ -82,12 +71,12 @@ class Deck(BaseModel):
 
 
 class DeckRequest(BaseModel):
-    name: str = Field(...)
+    name: str = Field(..., max_length=64)
 
 
 class User(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
-    username: str = Field(...)
+    username: str = Field(..., max_length=20)
     hashed_password: str = Field(...)
     decks: list[Deck] = []
 
@@ -104,14 +93,14 @@ class User(BaseModel):
 
 
 class CardUpdateRequest(BaseModel):
-    card_id: str
-    new_question: str
-    new_answer: str
-    new_date: str
+    card_id: str = Field(..., max_length=64)
+    new_question: str = Field(..., max_length=64)
+    new_answer: str = Field(..., max_length=64)
+    new_date: str = Field(..., max_length=64)
     new_last_was_wrong: bool
     new_last_interval: int
 
 
 class CardUpdateRequests(BaseModel):
-    deck_id: str
-    requests: list[CardUpdateRequest]
+    deck_id: str = Field(..., max_length=64)
+    requests: conlist(CardUpdateRequest, max_items=30)
