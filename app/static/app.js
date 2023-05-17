@@ -52,11 +52,7 @@ class CurrentDeck {
     buildCardsToLearn() {
         var cards = new CardsQueue;
         const now = Date.now();
-        this.deck.cards.forEach(card => {
-            if (Date.parse(card.date) < now) {
-                cards.enqueue(card);
-            }
-        });
+        this.deck.cards.filter((card) => Date.parse(card.date) < now).forEach((card) => {cards.enqueue(card)});
         return cards
     }
 
@@ -111,107 +107,90 @@ class CurrentDeck {
     }
 }
 
-
 async function getUserDecks() {
-    let response = await fetch(rootUrl + "decks");
-    if (response.status !== 200) {
-        loadLoginPage();
-    }
-    else {
+    const response = await fetch(rootUrl + "decks");
+    if (response.ok) {
         let data = await response.json();
-        console.log(data);
-        let newDecks = {}
-        data.forEach(deck => {
-            newDecks[deck._id] = deck;
-        });
-        return newDecks
+        return data;
     }
+    if (response.status == 401) {
+        loadLoginPage();
+        return
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
-function sendLoginRequest() {
-    var formElement = document.getElementById('login-form');
-    var data = new FormData(formElement);
+async function sendLoginRequest(formData) {
     var req = {
         method: "POST",
-        body: data,
+        body: formData,
     }
-    fetch(rootUrl + 'token', req)
-        .then(function (response) {
-            if (response.status !== 200) {
-                console.log(
-                    'Looks like there was a problem. Status Code: ' + response.status
-                );
-                loadLoginPage();
-            }
-            response.json()
-                .then(function (data) {
-                    loadHomePage();
-            });
-        })
-        .catch(function (err) {
-            console.log('Fetch Error :-S', err);
-        });
+    const response = await fetch(rootUrl + 'token', req)
+    if (response.ok) {
+        return response
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
-async function sendRegisterRequest() {
-    var formElement = document.getElementById('register-form');
-    var data = new FormData(formElement);
+async function sendRegisterRequest(formData) {
     var req = {
         method: "POST",
-        body: data,
+        body: formData,
     }
-    let response = await fetch(rootUrl + 'user', req)
-    loadLoginPage();
+    const response = await fetch(rootUrl + 'user', req)
+    if (response.ok) {
+        return response
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
 async function sendLogoutRequest() {
     var req = {
         method: "POST"
     }
-    response = await fetch(rootUrl + 'logout', req);
-    // data = await response.json();
-    return response
+    const response = await fetch(rootUrl + 'logout', req);
+    if (response.ok) {
+        return response
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
-async function sendCreateDeckRequest() {
-    var deckName = document.getElementById('deck-name-field').value;
-    var data = {name: deckName}
-    data = JSON.stringify(data);
+async function sendCreateDeckRequest(requestBody) {
     var req = {
         method: "POST",
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: data,
+        body: requestBody,
     }
-
     const response = await fetch(rootUrl + 'decks', req);
-    // data = await response.json();
-    // let newDecks = {}
-    // data.decks.forEach(deck => {
-    //     newDecks[deck._id] = deck;
-    // });
-    // decks = newDecks;
-    // console.log(data);
-    loadHomePage();
+    if (response.ok) {
+        return response
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
-async function sendCreateCardRequest(deck_id) {
-    var question = document.getElementById('card-question-field').value;
-    var answer = document.getElementById('card-answer-field').value;
-    var data = {"question": question, "answer": answer}
-    data = JSON.stringify(data);
+async function sendCreateCardRequest(deck_id, requestBody) {
     var req = {
         method: "POST",
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: data,
+        body: requestBody,
     }
-
     const response = await fetch(rootUrl + 'cards/' + deck_id, req);
+    if (response.ok) {
+        return response
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
 async function getDeck(deck_id) {
@@ -222,14 +201,16 @@ async function getDeck(deck_id) {
             'Content-Type': 'application/json'
         }
     }
-
     const response = await fetch(rootUrl + "decks/" + deck_id, req);
-    const deckData = await response.json();
-    return deckData
+    if (response.ok) {
+        const deckData = await response.json();
+        return deckData
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
 async function sendDeckUpdates(updates) {
-    console.log(updates)
     var req = {
         method: "PUT",
         headers: {
@@ -238,10 +219,12 @@ async function sendDeckUpdates(updates) {
         },
         body: updates,
     }
-
     const response = await fetch(rootUrl + 'decks', req);
-    // data = await response.json();
-    // return data
+    if (response.ok) {
+        return response
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
 async function deleteDeck(deck_id) {
@@ -252,9 +235,12 @@ async function deleteDeck(deck_id) {
             'Content-Type': 'application/json'
         }
     }
-
     const response = await fetch(rootUrl + 'decks/' + deck_id, req);
-    return response
+    if (response.ok) {
+        return response
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
 async function deleteCard(card_id) {
@@ -265,9 +251,12 @@ async function deleteCard(card_id) {
             'Content-Type': 'application/json'
         }
     }
-
     const response = await fetch(rootUrl + 'cards/' + card_id, req);
-    return response
+    if (response.ok) {
+        return response
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
 function createLoginForm() {
@@ -276,17 +265,15 @@ function createLoginForm() {
 
     let loginFormTemplate = `
     <form id="login-form">
-        <input type="text" name="username" id="username-field" class="login-form-field" placeholder="Username">
-        <input type="password" name="password" id="password-field" class="login-form-field" placeholder="Password">
+        <input type="text" name="username" id="username-field" class="login-form-field" placeholder="Username" maxlength="20">
+        <input type="password" name="password" id="password-field" class="login-form-field" placeholder="Password" maxlength="20">
         <input type="submit" value="Login" id="login-form-submit">
     </form>`;
 
     appContainer.innerHTML = loginFormTemplate;
     document.getElementById("login-form").addEventListener("submit", function (e) {
         e.preventDefault();
-        enableModal();
-        sendLoginRequest();
-        disableModal();
+        manageLoginRequest(this);
     });
 }
 
@@ -295,23 +282,21 @@ function createRegisterForm() {
 
     let registerFormTemplate = `
     <form id="register-form">
-        <input type="text" name="client_secret" id="invite-code-field" class="register-form-field" placeholder="Invite code">
-        <input type="text" name="username" id="username-field" class="register-form-field" placeholder="Username">
-        <input type="password" name="password" id="password-field" class="register-form-field" placeholder="Password">
+        <input type="text" name="client_secret" id="invite-code-field" class="register-form-field" placeholder="Invite code" maxlength="64">
+        <input type="text" name="username" id="username-field" class="register-form-field" placeholder="Username" maxlength="20">
+        <input type="password" name="password" id="password-field" class="register-form-field" placeholder="Password" maxlength="20">
         <input type="submit" value="Register" id="login-form-submit">
     </form>`;
 
     appContainer.innerHTML = registerFormTemplate;
-    document.getElementById("register-form").addEventListener("submit", function (e) {
+    document.getElementById("register-form").addEventListener("submit", async function (e) {
         e.preventDefault();
-        enableModal();
-        sendRegisterRequest();
-        disableModal();
+        await manageRegisterRequest(this);
     });
 }
 
 function renderConfirmDeleteDialog(msg, callback) {
-    let confirmDeleteDialog = document.getElementById("confirm-delete-dialog");
+    let confirmDeleteDialog = document.getElementById("message-dialog");
     confirmDeleteDialog.showModal();
 
     dialogTemplate = `
@@ -344,15 +329,15 @@ function createDeckContainer(deckData) {
         <div class="deck">
             <div class="deck-top clickable">
                 <p>${deckName}</p>
-                <span class="material-symbols-outlined size-48" style="font-size:48px;">play_arrow</span>
+                <span class="material-symbols-outlined size-48 symbol-big">play_arrow</span>
             </div>
             <div class="deck-bottom">
                 <div class="delete clickable">
-                    <div><span class="material-symbols-outlined size-48" style="font-size:36px;">delete</span></div>
+                    <div><span class="material-symbols-outlined size-48 symbol-big">delete</span></div>
                     <div>delete<br>deck</div>
                 </div>
                 <div class="list clickable">
-                    <div><span class="material-symbols-outlined size-48" style="font-size:36px;">list</span></div>
+                    <div><span class="material-symbols-outlined size-48 symbol-big">list</span></div>
                     <div>list<br>view</div>
                 </div>
             </div>
@@ -369,21 +354,14 @@ function createDeckContainer(deckData) {
     });
 
     let deleteDiv = deckContainer.getElementsByClassName("delete")[0];
-    deleteDiv.addEventListener("click", function (e) {
+    deleteDiv.addEventListener("click", async function (e) {
         e.preventDefault();
-        const callback = async () => {
-            e.preventDefault();
-            enableModal();
-            await deleteDeck(deckData._id);
-            disableModal();
-            loadHomePage();}
-        renderConfirmDeleteDialog("Confirm delete deck", callback);
+        await manageDeleteDeck(deckData._id);
     });
 
     let listDiv = deckContainer.getElementsByClassName("list")[0];
     listDiv.addEventListener("click", function (e) {
         e.preventDefault();
-        console.log("clicking list-view")
         loadListView(deckId);
     });
 
@@ -394,7 +372,7 @@ function createCreateDeckContainer() {
     let createDeckTemplate = `
     <div class="deck new-deck">
         <div class="add-new-deck clickable">
-            <div><span class="material-symbols-outlined size-48" style="font-size:48px;">add</span></div>
+            <div><span class="material-symbols-outlined size-48 symbol-big">add</span></div>
             <div>Add new deck</div>
         </div>
     </div>`;
@@ -405,7 +383,6 @@ function createCreateDeckContainer() {
 
     let createDeckDiv = deckContainer.getElementsByClassName("add-new-deck")[0];
     createDeckDiv.addEventListener("click", function (e) {
-        console.log("clicked add new deck");
         e.preventDefault();
         renderCreateDeckForm();
     });
@@ -424,43 +401,32 @@ function renderDecks(decks) {
 }
 
 function renderCreateDeckForm() {
-    console.log(decks);
+    appContainer.innerHTML = `
+    <div id="controls">
+        <div id="back" class="clickable">
+            <div>
+                <span class="material-symbols-outlined size-48 symbol-medium">arrow_back_ios_new</span>
+            </div>
+            <div>
+                <p>go back</p>
+            </div>
+        </div>
+    </div>
+    <form id="create-deck-form">
+        <input type="text" name="name" id="deck-name-field" placeholder="name" class="create-deck-form-field" maxlength="64">
+        <input type="submit" value="create new deck" id="create-new-deck-form-submit">
+    </form>`;
 
-    const appContainer = document.getElementById("app-container");
-    appContainer.innerHTML = "";
-
-    let backButton = document.createElement("button");
-    backButton.setAttribute("type", "button");
-    backButton.innerHTML = "go back";
-    backButton.addEventListener("click", async function (e) {
+    let backButton = document.getElementById("back");
+    backButton.addEventListener("click", function (e) {
         e.preventDefault();
         loadHomePage();
     });
 
-    const createDeckForm = document.createElement("form");
-    createDeckForm.setAttribute("id", "create-deck-form");
-
-    const deckNameField = document.createElement("input");
-    deckNameField.setAttribute("type", "text");
-    deckNameField.setAttribute("name", "name");
-    deckNameField.setAttribute("id", "deck-name-field");
-    deckNameField.setAttribute("class", "create-deck-form-field");
-    deckNameField.setAttribute("placeholder", "Deck name");
-
-    const submitButton = document.createElement("input");
-    submitButton.setAttribute("type", "submit");
-    submitButton.setAttribute("value", "Create new deck");
-    submitButton.setAttribute("id", "create-new-deck-form-submit");
-
-    createDeckForm.appendChild(deckNameField);
-    createDeckForm.appendChild(submitButton);
-    createDeckForm.addEventListener("submit", function (e) {
+    document.getElementById("create-deck-form").addEventListener("submit", async function (e) {
         e.preventDefault();
-        sendCreateDeckRequest();
+        await manageCreateDeck(this);
     });
-
-    appContainer.appendChild(backButton);
-    appContainer.appendChild(createDeckForm);
 }
 
 function renderCreateCardForm(deck_id, callback) {
@@ -469,7 +435,7 @@ function renderCreateCardForm(deck_id, callback) {
     <div id="controls">
         <div id="back" class="clickable">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">arrow_back_ios_new</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">arrow_back_ios_new</span>
             </div>
             <div>
                 <p>go back</p>
@@ -477,8 +443,8 @@ function renderCreateCardForm(deck_id, callback) {
         </div>
     </div>
     <form id="create-card-form">
-        <input type="text" name="question" id="card-question-field" placeholder="question">
-        <input type="text" name="answer" id="card-answer-field" placeholder="answer">
+        <input type="text" name="question" id="card-question-field" placeholder="question" maxlength="64">
+        <input type="text" name="answer" id="card-answer-field" placeholder="answer" maxlength="64">
         <input type="submit" value="Create new card" id="create-new-card-form-submit">
     </form>`;
 
@@ -487,15 +453,10 @@ function renderCreateCardForm(deck_id, callback) {
         e.preventDefault();
         callback();
     });
-
-    let createCardForm = document.getElementById("create-card-form");
-    createCardForm.addEventListener("submit", async function (e) {
+    
+    document.getElementById("create-card-form").addEventListener("submit", async function (e) {
         e.preventDefault();
-        enableModal();
-        await sendCreateCardRequest(deck_id);
-        disableModal();
-        this.question.value = "";
-        this.answer.value = "";
+        await manageCreateCard(deck_id, this);
     });
 }
 
@@ -505,7 +466,7 @@ function getEta(date) {
     let difference = date - now;
     if (difference < 0) return "now";
     let days = Math.floor(difference / (24 * 60 * 60 * 1000));
-    if (days < 0) return "< 1 day";
+    if (days == 0) return "< 1 day";
     if (days == 1) return "1 day+";
     return `${days} days+`;
 }
@@ -517,7 +478,7 @@ function renderEditCardViewFromList(deckId, cardData) {
     <div id="controls">
         <div id="back" class="clickable">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">arrow_back_ios_new</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">arrow_back_ios_new</span>
             </div>
             <div>
                 <p>go back</p>
@@ -525,33 +486,14 @@ function renderEditCardViewFromList(deckId, cardData) {
         </div>
     </div>
     <form id="edit-card-form">
-        <input type="text" name="question" id="card-question-field" placeholder="question" value="${oldQuestion}">
-        <input type="text" name="answer" id="card-answer-field" placeholder="answer" value="${oldAnswer}">
+        <input type="text" name="question" id="card-question-field" placeholder="question" value="${oldQuestion}" maxlength="64">
+        <input type="text" name="answer" id="card-answer-field" placeholder="answer" value="${oldAnswer}" maxlength="64">
         <input type="submit" value="Edit card" id="edit-card-form-submit">
     </form>`;
 
-    let editCardForm = document.getElementById("edit-card-form")
-    editCardForm.addEventListener("submit", async function (e) {
+    document.getElementById("edit-card-form").addEventListener("submit", async function (e) {
         e.preventDefault();
-        let newQuestion = this.question.value;
-        let newAnswer = this.answer.value;
-        let updates = {
-            "deck_id": deckId,
-            "requests": [
-                {
-                    "card_id": cardData._id,
-                    "new_question": newQuestion,
-                    "new_answer": newAnswer,
-                    "new_date": cardData.date,
-                    "new_last_was_wrong": cardData.last_was_wrong,
-                    "new_last_interval": cardData.last_interval
-                }
-            ]
-        }
-        updates = JSON.stringify(updates);
-        await sendDeckUpdates(updates);
-        console.log(updates);
-        loadListView(deckId);
+        await manageUpdateCardFromListView(this, cardData, deckId);
     });
 }
 
@@ -560,7 +502,7 @@ function renderListView(deckData) {
     <div id="controls">
         <div id="back" class="clickable">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">arrow_back_ios_new</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">arrow_back_ios_new</span>
             </div>
             <div>
                 <p>go back</p>
@@ -568,7 +510,7 @@ function renderListView(deckData) {
         </div>
         <div id="add-new-card" class="clickable">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">add</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">add</span>
             </div>
             <div>
                 <p>add new card</p>
@@ -584,7 +526,6 @@ function renderListView(deckData) {
     let addNewCardButton = document.getElementById("add-new-card");
     addNewCardButton.addEventListener("click", function (e) {
         e.preventDefault();
-        console.log(deckData);
         const callback = () => {
             return loadListView(deckData._id);
         }
@@ -606,10 +547,10 @@ function renderListView(deckData) {
 			<div class="table-cell small">${getEta(card.date)}</div>
             <div style="display: flex;">
                 <div class="edit-card clickable">
-                    <span class="material-symbols-outlined size-48" style="font-size:24px;">edit</span>
+                    <span class="material-symbols-outlined size-48 symbol-small">edit</span>
                 </div>
                 <div class="delete-card clickable">
-                    <span class="material-symbols-outlined size-48" style="font-size:24px;">delete</span>
+                    <span class="material-symbols-outlined size-48 symbol-small">delete</span>
                 </div>
             </div>`;
         row.innerHTML = cells;
@@ -619,23 +560,12 @@ function renderListView(deckData) {
         });
 
         let deleteCardDiv = row.getElementsByClassName("delete-card")[0];
-        deleteCardDiv.addEventListener("click", function (e) {
-            const callback = async () => {
-                enableModal();
-                await deleteCard(card._id);
-                disableModal();
-                loadListView(deckData._id);
-            };
-            renderConfirmDeleteDialog("confirm delete card", callback);
+        deleteCardDiv.addEventListener("click", async function (e) {
+            await manageDeleteCardFromListView(card._id, deckData._id);
         });
-
         table.appendChild(row);
-        // console.log(temp.firstChild);
     }
     appContainer.appendChild(table);
-    // table = document.createElement("div");
-    // table.setAttribute("class", "empty");
-    // appContainer.appendChild(table);
 }
 
 // ================ CARD LEARNING ================
@@ -646,8 +576,8 @@ function renderEditCardViewFromLearning(currentDeck) {
     let oldAnswer = currentCard.answer;
     let editCardView = `
     <form id="edit-card-form">
-        <input type="text" name="question" id="card-question-field" placeholder="question" value="${oldQuestion}">
-        <input type="text" name="answer" id="card-answer-field" placeholder="answer" value="${oldAnswer}">
+        <input type="text" name="question" id="card-question-field" placeholder="question" value="${oldQuestion}" maxlength="64">
+        <input type="text" name="answer" id="card-answer-field" placeholder="answer" value="${oldAnswer}" maxlength="64">
         <input type="submit" value="Edit card" id="edit-card-form-submit">
     </form>`;
 
@@ -657,16 +587,11 @@ function renderEditCardViewFromLearning(currentDeck) {
         e.preventDefault();
         let newQuestion = document.getElementById("card-question-field").value;
         let newAnswer = document.getElementById("card-answer-field").value;
-
-        // enableModal();
-        // await sendCreateCardRequest(deck_id);
-        // disableModal();
         currentCard.question = newQuestion;
         currentCard.answer = newAnswer;
+        currentDeck.updates[currentCard._id] = currentCard;
         renderCardsLearningPage(currentDeck);
     });
-
-
 }
 
 function createCardDiv(question, answer, showAnswer=false) {
@@ -690,9 +615,7 @@ function createCardDiv(question, answer, showAnswer=false) {
 }
 
 function disableButtons() {
-    console.log("disabling buttons");
     let showAnswer = document.getElementById("show-answer");
-    console.log(showAnswer);
     let wrongAnswer = document.getElementById("wrong-answer");
     let correctAnswer = document.getElementById("correct-answer");
     showAnswer.style.display = "none";
@@ -723,10 +646,6 @@ function refreshCardsLearningVariables(currentDeck) {
     if (!currentDeck.isQueueEmpty()) {
         updateIntervalInButton(currentDeck.getNextCardsInterval());
     }
-    // let editCardButton = document.getElementById("edit-card");
-    // editCardButton.addEventListener("click", function(e) {
-        
-    // });
 }
 
 function renderCardsLearningPage(currentDeck) {
@@ -735,7 +654,7 @@ function renderCardsLearningPage(currentDeck) {
     <div id="controls">
         <div id="back" class="clickable">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">arrow_back_ios_new</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">arrow_back_ios_new</span>
             </div>
             <div>
                 <p>sync and go back</p>
@@ -743,7 +662,7 @@ function renderCardsLearningPage(currentDeck) {
         </div>
         <div id="edit-card" class="clickable">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">edit</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">edit</span>
             </div>
             <div>
                 <p>edit card</p>
@@ -751,7 +670,7 @@ function renderCardsLearningPage(currentDeck) {
         </div>
         <div id="add-new-card" class="clickable">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">add</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">add</span>
             </div>
             <div>
                 <p>add new card</p>
@@ -759,7 +678,7 @@ function renderCardsLearningPage(currentDeck) {
         </div>
         <div id="remove-card" class="clickable">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">delete</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">delete</span>
             </div> 
             <div>
                 <p>remove card</p>
@@ -771,7 +690,7 @@ function renderCardsLearningPage(currentDeck) {
     <div id="buttons-div" class="prevent-select">
         <div id="show-answer" class="clickable" style="display: block;">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">visibility</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">visibility</span>
             </div>
             <div>
                 <p class="learning-button">show answer</p>
@@ -779,7 +698,7 @@ function renderCardsLearningPage(currentDeck) {
         </div>
         <div id="wrong-answer" class="clickable" style="display: none;">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">close</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">close</span>
             </div>
             <div>
                 <p class="learning-button">wrong answer</p>
@@ -787,7 +706,7 @@ function renderCardsLearningPage(currentDeck) {
         </div>
         <div id="correct-answer" class="clickable" style="display: none;">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">check</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">check</span>
             </div>
             <div>
                 <p class="learning-button" id="correct-button-text"></p>
@@ -797,34 +716,24 @@ function renderCardsLearningPage(currentDeck) {
     appContainer.innerHTML = cardsLearningPageTemplate;
 
     let backButton = document.getElementById("back");
-    backButton.addEventListener("click", function(e) {
-            loadHomePage();
+    backButton.addEventListener("click", async function(e) {
+        await manageBackFromLearningView(currentDeck);
     });
 
     let editCardButton = document.getElementById("edit-card");
     editCardButton.addEventListener("click", function(e) {
         if (!currentDeck.isQueueEmpty()) {
-            console.log(currentDeck.getTopCard());
             renderEditCardViewFromLearning(currentDeck);
         }
     });
 
     let deleteCardButton = document.getElementById("remove-card");
     deleteCardButton.addEventListener("click", function(e) {
-        if (!currentDeck.isQueueEmpty()) {
-            let topCard = currentDeck.getTopCard();
-            const callback = async () => {
-                await sendDeckUpdates(currentDeck.buildDeckUpdateRequestBody());
-                await deleteCard(topCard._id);
-                loadCardsLearningPage(currentDeck.deck._id);
-            }
-            renderConfirmDeleteDialog("confirm delete card", callback);
-        }
+        manageDeleteCardFromLearningView(currentDeck);
     });
 
     let addNewCardButton = document.getElementById("add-new-card");
     addNewCardButton.addEventListener("click", function(e) {
-            console.log("dd");
             const callback = function() { return loadCardsLearningPage(currentDeck.deck._id); };
             renderCreateCardForm(currentDeck.deck._id, callback);
     });
@@ -903,7 +812,7 @@ function loadDarkThemeButton() {
     newThemeControlDiv.setAttribute("class", "clickable");
     newThemeControlDiv.innerHTML = `
         <div>
-            <span class="material-symbols-outlined size-48" style="font-size:36px;">dark_mode</span>
+            <span class="material-symbols-outlined size-48 symbol-medium">dark_mode</span>
         </div>
         <div>
             dark
@@ -923,7 +832,7 @@ function loadLightThemeButton() {
     newThemeControlDiv.setAttribute("class", "clickable");
     newThemeControlDiv.innerHTML = `
         <div>
-            <span class="material-symbols-outlined size-48" style="font-size:36px;">light_mode</span>
+            <span class="material-symbols-outlined size-48 symbol-medium">light_mode</span>
         </div>
         <div>
             light
@@ -944,7 +853,7 @@ function createUserControlButton(action, callback) {
     userControl.innerHTML = `
     <div class="clickable">
         <div>
-            <span class="material-symbols-outlined size-48" style="font-size:36px;">${symbolName}</span>
+            <span class="material-symbols-outlined size-48 symbol-medium">${symbolName}</span>
         </div>
         <div>
             ${action}
@@ -956,69 +865,175 @@ function createUserControlButton(action, callback) {
     });
 }
 
-const login = async () => {
-    console.log("login");
+const manageLogin = async () => {
     loadLoginPage();
 }
 
-const register = () => {
-    console.log("register");
+const manageRegister = () => {
     loadRegisterPage();
 }
 
-const logout = async () => {
-    console.log("logout");
+const manageLogout = async () => {
     await sendLogoutRequest();
     loadLoginPage();
 }
-
 
 function turnOnDarkMode() {
     let body = document.body;
     body.classList.add("dark-mode");
 }
 
-
 function turnOffDarkMode() {
     let body = document.body;
     body.classList.remove("dark-mode");
 }
 
+function JSONFromFormData(form) {
+    formData = new FormData(form);
+    var JSONObject = {};
+    formData.forEach((value, key) => JSONObject[key] = value);
+    return JSON.stringify(JSONObject)
+}
+
+async function manageCreateCard(deck_id, createCardForm) {
+    let requestBody = JSONFromFormData(createCardForm)
+    enableModal();
+    let response = await sendCreateCardRequest(deck_id, requestBody);
+    disableModal();
+    if (response) {
+        createCardForm.question.value = "";
+        createCardForm.answer.value = "";
+    }
+}
+
+async function manageCreateDeck(createDeckForm) {
+    let requestBody = JSONFromFormData(createDeckForm);
+    enableModal();
+    await sendCreateDeckRequest(requestBody);
+    disableModal();
+    loadHomePage();
+}
+
+async function manageLoginRequest(form) {
+    let formData = new FormData(form);
+    enableModal();
+    let response = await sendLoginRequest(formData);
+    disableModal();
+    if (response){
+        loadHomePage();
+    }
+}
+
+async function manageRegisterRequest(form) {
+    let formData = new FormData(form);
+    enableModal();
+    let response = await sendRegisterRequest(formData);
+    disableModal();
+    if (response){
+        loadLoginPage();
+    }
+}
+
+async function manageUpdateCardFromListView(form, cardData, deckId) {
+    let newQuestion = form.question.value;
+    let newAnswer = form.answer.value;
+    let updates = {
+        "deck_id": deckId,
+        "requests": [
+            {
+                "card_id": cardData._id,
+                "new_question": newQuestion,
+                "new_answer": newAnswer,
+                "new_date": cardData.date,
+                "new_last_was_wrong": cardData.last_was_wrong,
+                "new_last_interval": cardData.last_interval
+            }
+        ]
+    }
+    updates = JSON.stringify(updates);
+    enableModal();
+    let response = await sendDeckUpdates(updates);
+    disableModal();
+    if (response) {
+        loadListView(deckId);
+    }
+}
+
+async function manageDeleteDeck(deckId) {
+    const callback = async () => {
+        enableModal();
+        await deleteDeck(deckId);
+        disableModal();
+        loadHomePage();}
+    renderConfirmDeleteDialog("confirm delete deck", callback);
+}
+
+
+async function manageDeleteCardFromListView(cardId, deckId) {
+    const callback = async () => {
+        enableModal();
+        let response = await deleteCard(cardId);
+        disableModal();
+        if (response) {
+            loadListView(deckId);
+        }
+    };
+    renderConfirmDeleteDialog("confirm delete card", callback);
+}
+
+async function manageDeleteCardFromLearningView(currentDeck) {
+    if (!currentDeck.isQueueEmpty()) {
+        let topCard = currentDeck.getTopCard();
+        const callback = async () => {
+            enableModal();
+            await sendDeckUpdates(currentDeck.buildDeckUpdateRequestBody());
+            await deleteCard(topCard._id);
+            disableModal();
+            loadCardsLearningPage(currentDeck.deck._id);
+        }
+        renderConfirmDeleteDialog("confirm delete card", callback);
+    }
+}
+
+async function manageBackFromLearningView(currentDeck) {
+    let requestBody = currentDeck.buildDeckUpdateRequestBody();
+    enableModal();
+    await sendDeckUpdates(requestBody);
+    disableModal();
+    loadHomePage();
+}
 
 async function loadHomePage() {
-    console.log("attempting to load decks");
-    createUserControlButton("logout", logout);
+    createUserControlButton("logout", manageLogout);
     enableModal();
     decks = await getUserDecks();
     disableModal();
     if (decks) {
-        renderDecks(decks);
+        let newDecks = {};
+        decks.map((deck) => newDecks[deck._id] = deck);
+        return renderDecks(newDecks);
     }
+    return loadLoginPage();
 }
 
 function loadLoginPage() {
-    // enableModal();
-    console.log("attempting to load login page");
-    createUserControlButton("register", register);
+    createUserControlButton("register", manageRegister);
     createLoginForm();
-    // disableModal();
 }
 
 function loadRegisterPage() {
-    // enableModal();
-    console.log("attempting to load login page");
-    createUserControlButton("login", login);
+    createUserControlButton("login", manageLogin);
     createRegisterForm();
-    // disableModal();
 }
 
 async function loadCardsLearningPage(deck_id) {
     enableModal();
     let deckData = await getDeck(deck_id);
     disableModal();
-    let currentDeck = new CurrentDeck(deckData);
-    console.log(JSON.stringify(currentDeck));
-    renderCardsLearningPage(currentDeck);
+    if (deckData) {
+        let currentDeck = new CurrentDeck(deckData);
+        renderCardsLearningPage(currentDeck);
+    }
 }
 
 function enableModal() {
@@ -1040,6 +1055,21 @@ async function loadListView(deckId) {
     let deckData = await getDeck(deckId);
     disableModal();
     renderListView(deckData);
+}
+
+function openMessageDialog(msg) {
+    let dialog = document.getElementById("message-dialog");
+    dialog.innerHTML = `
+    <h2>${msg}</h2>
+    <div>
+        <button id="close-dialog">back</button>
+    </div>`;
+    let closeDialog = document.getElementById("close-dialog");
+    closeDialog.addEventListener("click", function(e) {
+        e.preventDefault();
+        dialog.close();
+    });
+    dialog.showModal();
 }
 
 var appContainer = document.getElementById("app-container");

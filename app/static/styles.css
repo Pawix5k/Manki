@@ -42,6 +42,18 @@ footer {
     /* background-color: rgba(255, 0, 0, 0.2); */
 }
 
+.symbol-big {
+  font-size: 3em;
+}
+
+.symbol-medium {
+  font-size: 2.25em;
+}
+
+.symbol-small {
+  font-size: 1.5em;
+}
+
 .info {
     display: flex;
     align-items: center;
@@ -278,11 +290,11 @@ p.learning-button {
   z-index: 5;
   }
   50% {
-      transform: translate(120%) scale(90%);
+      transform: translate(120%, -5%) scale(90%);
       z-index: -1;
   }
   100% {
-      transform: scale(80%);
+      transform: translateY(-5%) scale(80%);
   }
 }
 
@@ -313,6 +325,7 @@ p.learning-button {
   padding-top: 50px;
   grid-column: 1 / span 1;
   display: block;
+  font-size: 0.86em;
 }
 
 #edit-card,
@@ -406,8 +419,13 @@ dialog#waiting-modal>img {
   opacity: 0.6;
 }
 
-dialog#confirm-delete-dialog {
+dialog#message-dialog {
   position: fixed;
+}
+
+.dark-mode * dialog#message-dialog {
+  background-color: inherit;
+  color: inherit;
 }
 
 .clickable {
@@ -432,6 +450,7 @@ dialog#confirm-delete-dialog {
   border-bottom: 2px solid #bbb;
   margin: 20px;
   background-color: inherit;
+  color: inherit;
 }
 
 input:focus {
@@ -455,12 +474,41 @@ input:focus {
 }
 
 
-@media screen and (max-width: 1200px) {
+/* @media screen and (max-width: 1200px) {
   .deck-container {
       grid-column: span 3;
   }
   .grid-container {
       grid-template-columns: 1fr 22fr 1fr;
+  }
+} */
+
+@media screen and (max-aspect-ratio: 1) {
+  .deck-container {
+      grid-column: span 3;
+  }
+  .grid-container {
+      grid-template-columns: 1fr 22fr 1fr;
+  }
+
+  #card-container {
+    grid-column: 2 / span 4;
+  }
+
+  #buttons-div {
+    grid-column: 2 / span 4;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  body {
+    font-size: 0.8em;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  body {
+    font-size: 0.6em;
   }
 }
 
