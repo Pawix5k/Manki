@@ -211,7 +211,6 @@ async function getDeck(deck_id) {
 }
 
 async function sendDeckUpdates(updates) {
-    console.log(updates)
     var req = {
         method: "PUT",
         headers: {
@@ -294,9 +293,6 @@ function createRegisterForm() {
     document.getElementById("register-form").addEventListener("submit", async function (e) {
         e.preventDefault();
         await manageRegisterRequest(this);
-        // enableModal();
-        // sendRegisterRequest();
-        // disableModal();
     });
 }
 
@@ -373,7 +369,6 @@ function createDeckContainer(deckData) {
     let listDiv = deckContainer.getElementsByClassName("list")[0];
     listDiv.addEventListener("click", function (e) {
         e.preventDefault();
-        console.log("clicking list-view")
         loadListView(deckId);
     });
 
@@ -395,7 +390,6 @@ function createCreateDeckContainer() {
 
     let createDeckDiv = deckContainer.getElementsByClassName("add-new-deck")[0];
     createDeckDiv.addEventListener("click", function (e) {
-        console.log("clicked add new deck");
         e.preventDefault();
         renderCreateDeckForm();
     });
@@ -527,7 +521,6 @@ function renderEditCardViewFromList(deckId, cardData) {
         }
         updates = JSON.stringify(updates);
         await sendDeckUpdates(updates);
-        console.log(updates);
         loadListView(deckId);
     });
 }
@@ -561,7 +554,6 @@ function renderListView(deckData) {
     let addNewCardButton = document.getElementById("add-new-card");
     addNewCardButton.addEventListener("click", function (e) {
         e.preventDefault();
-        console.log(deckData);
         const callback = () => {
             return loadListView(deckData._id);
         }
@@ -605,14 +597,9 @@ function renderListView(deckData) {
             };
             renderConfirmDeleteDialog("confirm delete card", callback);
         });
-
         table.appendChild(row);
-        // console.log(temp.firstChild);
     }
     appContainer.appendChild(table);
-    // table = document.createElement("div");
-    // table.setAttribute("class", "empty");
-    // appContainer.appendChild(table);
 }
 
 // ================ CARD LEARNING ================
@@ -634,10 +621,6 @@ function renderEditCardViewFromLearning(currentDeck) {
         e.preventDefault();
         let newQuestion = document.getElementById("card-question-field").value;
         let newAnswer = document.getElementById("card-answer-field").value;
-
-        // enableModal();
-        // await sendCreateCardRequest(deck_id);
-        // disableModal();
         currentCard.question = newQuestion;
         currentCard.answer = newAnswer;
         renderCardsLearningPage(currentDeck);
@@ -667,9 +650,7 @@ function createCardDiv(question, answer, showAnswer=false) {
 }
 
 function disableButtons() {
-    console.log("disabling buttons");
     let showAnswer = document.getElementById("show-answer");
-    console.log(showAnswer);
     let wrongAnswer = document.getElementById("wrong-answer");
     let correctAnswer = document.getElementById("correct-answer");
     showAnswer.style.display = "none";
@@ -700,10 +681,6 @@ function refreshCardsLearningVariables(currentDeck) {
     if (!currentDeck.isQueueEmpty()) {
         updateIntervalInButton(currentDeck.getNextCardsInterval());
     }
-    // let editCardButton = document.getElementById("edit-card");
-    // editCardButton.addEventListener("click", function(e) {
-        
-    // });
 }
 
 function renderCardsLearningPage(currentDeck) {
@@ -781,7 +758,6 @@ function renderCardsLearningPage(currentDeck) {
     let editCardButton = document.getElementById("edit-card");
     editCardButton.addEventListener("click", function(e) {
         if (!currentDeck.isQueueEmpty()) {
-            console.log(currentDeck.getTopCard());
             renderEditCardViewFromLearning(currentDeck);
         }
     });
@@ -801,7 +777,6 @@ function renderCardsLearningPage(currentDeck) {
 
     let addNewCardButton = document.getElementById("add-new-card");
     addNewCardButton.addEventListener("click", function(e) {
-            console.log("dd");
             const callback = function() { return loadCardsLearningPage(currentDeck.deck._id); };
             renderCreateCardForm(currentDeck.deck._id, callback);
     });
@@ -934,27 +909,22 @@ function createUserControlButton(action, callback) {
 }
 
 const manageLogin = async () => {
-    console.log("login");
     loadLoginPage();
 }
 
 const manageRegister = () => {
-    console.log("register");
     loadRegisterPage();
 }
 
 const manageLogout = async () => {
-    console.log("logout");
     await sendLogoutRequest();
     loadLoginPage();
 }
-
 
 function turnOnDarkMode() {
     let body = document.body;
     body.classList.add("dark-mode");
 }
-
 
 function turnOffDarkMode() {
     let body = document.body;
@@ -981,7 +951,6 @@ async function manageCreateCard(deck_id, createCardForm) {
 
 async function manageCreateDeck(createDeckForm) {
     let requestBody = JSONFromFormData(createDeckForm);
-    console.log(requestBody);
     enableModal();
     await sendCreateDeckRequest(requestBody);
     disableModal();
@@ -1009,35 +978,26 @@ async function manageRegisterRequest(form) {
 }
 
 async function loadHomePage() {
-    console.log("attempting to load decks");
     createUserControlButton("logout", manageLogout);
     enableModal();
     decks = await getUserDecks();
     disableModal();
     if (decks) {
-        let newDecks = {}
-        decks.forEach(deck => {
-            newDecks[deck._id] = deck;
-        });
+        let newDecks = {};
+        decks.map((deck) => newDecks[deck._id] = deck);
         return renderDecks(newDecks);
     }
     return loadLoginPage();
 }
 
 function loadLoginPage() {
-    // enableModal();
-    console.log("attempting to load login page");
     createUserControlButton("register", manageRegister);
     createLoginForm();
-    // disableModal();
 }
 
 function loadRegisterPage() {
-    // enableModal();
-    console.log("attempting to load login page");
     createUserControlButton("login", manageLogin);
     createRegisterForm();
-    // disableModal();
 }
 
 async function loadCardsLearningPage(deck_id) {
@@ -1048,7 +1008,6 @@ async function loadCardsLearningPage(deck_id) {
         let currentDeck = new CurrentDeck(deckData);
         renderCardsLearningPage(currentDeck);
     }
-    // console.log(JSON.stringify(currentDeck));
 }
 
 function enableModal() {
@@ -1073,7 +1032,6 @@ async function loadListView(deckId) {
 }
 
 function openMessageDialog(msg) {
-    console.log("here");
     let dialog = document.getElementById("confirm-delete-dialog");
     dialog.innerHTML = `
     <h2>${msg}</h2>
