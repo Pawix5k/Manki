@@ -292,7 +292,7 @@ function createRegisterForm() {
 }
 
 function renderConfirmDeleteDialog(msg, callback) {
-    let confirmDeleteDialog = document.getElementById("confirm-delete-dialog");
+    let confirmDeleteDialog = document.getElementById("message-dialog");
     confirmDeleteDialog.showModal();
 
     dialogTemplate = `
@@ -1054,7 +1054,7 @@ async function loadListView(deckId) {
 }
 
 function openMessageDialog(msg) {
-    let dialog = document.getElementById("confirm-delete-dialog");
+    let dialog = document.getElementById("message-dialog");
     dialog.innerHTML = `
     <h2>${msg}</h2>
     <div>
