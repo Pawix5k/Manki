@@ -111,47 +111,27 @@ class CurrentDeck {
     }
 }
 
-
 async function getUserDecks() {
-    let response = await fetch(rootUrl + "decks");
-    if (response.status !== 200) {
-        loadLoginPage();
-    }
-    else {
+    const response = await fetch(rootUrl + "decks");
+    if (response.ok) {
         let data = await response.json();
-        console.log(data);
-        let newDecks = {}
-        data.forEach(deck => {
-            newDecks[deck._id] = deck;
-        });
-        return newDecks
+        return data;
     }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
-function sendLoginRequest() {
-    var formElement = document.getElementById('login-form');
-    var data = new FormData(formElement);
-    console.log(data);
+async function sendLoginRequest(formData) {
     var req = {
         method: "POST",
-        body: data,
+        body: formData,
     }
-    fetch(rootUrl + 'token', req)
-        .then(function (response) {
-            if (response.status !== 200) {
-                console.log(
-                    'Looks like there was a problem. Status Code: ' + response.status
-                );
-                loadLoginPage();
-            }
-            response.json()
-                .then(function (data) {
-                    loadHomePage();
-            });
-        })
-        .catch(function (err) {
-            console.log('Fetch Error :-S', err);
-        });
+    const response = await fetch(rootUrl + 'token', req)
+    if (response.ok) {
+        return response
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
 async function sendRegisterRequest(formData) {
@@ -294,9 +274,7 @@ function createLoginForm() {
     appContainer.innerHTML = loginFormTemplate;
     document.getElementById("login-form").addEventListener("submit", function (e) {
         e.preventDefault();
-        enableModal();
-        sendLoginRequest();
-        disableModal();
+        manageLoginRequest(this);
     });
 }
 
@@ -315,7 +293,7 @@ function createRegisterForm() {
     let form = document.getElementById("register-form");
     document.getElementById("register-form").addEventListener("submit", async function (e) {
         e.preventDefault();
-        await manageRegisterRequest(form);
+        await manageRegisterRequest(this);
         // enableModal();
         // sendRegisterRequest();
         // disableModal();
@@ -1010,12 +988,24 @@ async function manageCreateDeck(createDeckForm) {
     loadHomePage();
 }
 
+async function manageLoginRequest(form) {
+    let formData = new FormData(form);
+    enableModal();
+    let response = await sendLoginRequest(formData);
+    disableModal();
+    if (response){
+        loadHomePage();
+    }
+}
+
 async function manageRegisterRequest(form) {
     let formData = new FormData(form);
     enableModal();
-    await sendRegisterRequest(formData);
+    let response = await sendRegisterRequest(formData);
     disableModal();
-    loadLoginPage();
+    if (response){
+        loadLoginPage();
+    }
 }
 
 async function loadHomePage() {
@@ -1025,8 +1015,13 @@ async function loadHomePage() {
     decks = await getUserDecks();
     disableModal();
     if (decks) {
-        renderDecks(decks);
+        let newDecks = {}
+        decks.forEach(deck => {
+            newDecks[deck._id] = deck;
+        });
+        return renderDecks(newDecks);
     }
+    return loadLoginPage();
 }
 
 function loadLoginPage() {
