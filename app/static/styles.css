@@ -468,12 +468,41 @@ input:focus {
 }
 
 
-@media screen and (max-width: 1200px) {
+/* @media screen and (max-width: 1200px) {
   .deck-container {
       grid-column: span 3;
   }
   .grid-container {
       grid-template-columns: 1fr 22fr 1fr;
+  }
+} */
+
+@media screen and (max-aspect-ratio: 1) {
+  .deck-container {
+      grid-column: span 3;
+  }
+  .grid-container {
+      grid-template-columns: 1fr 22fr 1fr;
+  }
+
+  #card-container {
+    grid-column: 2 / span 4;
+  }
+
+  #buttons-div {
+    grid-column: 2 / span 4;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  body {
+    font-size: 0.8em;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  body {
+    font-size: 0.6em;
   }
 }
 
