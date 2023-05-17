@@ -325,15 +325,15 @@ function createDeckContainer(deckData) {
         <div class="deck">
             <div class="deck-top clickable">
                 <p>${deckName}</p>
-                <span class="material-symbols-outlined size-48" style="font-size:48px;">play_arrow</span>
+                <span class="material-symbols-outlined size-48 symbol-big">play_arrow</span>
             </div>
             <div class="deck-bottom">
                 <div class="delete clickable">
-                    <div><span class="material-symbols-outlined size-48" style="font-size:36px;">delete</span></div>
+                    <div><span class="material-symbols-outlined size-48 symbol-big">delete</span></div>
                     <div>delete<br>deck</div>
                 </div>
                 <div class="list clickable">
-                    <div><span class="material-symbols-outlined size-48" style="font-size:36px;">list</span></div>
+                    <div><span class="material-symbols-outlined size-48 symbol-big">list</span></div>
                     <div>list<br>view</div>
                 </div>
             </div>
@@ -368,7 +368,7 @@ function createCreateDeckContainer() {
     let createDeckTemplate = `
     <div class="deck new-deck">
         <div class="add-new-deck clickable">
-            <div><span class="material-symbols-outlined size-48" style="font-size:48px;">add</span></div>
+            <div><span class="material-symbols-outlined size-48 symbol-big">add</span></div>
             <div>Add new deck</div>
         </div>
     </div>`;
@@ -401,7 +401,7 @@ function renderCreateDeckForm() {
     <div id="controls">
         <div id="back" class="clickable">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">arrow_back_ios_new</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">arrow_back_ios_new</span>
             </div>
             <div>
                 <p>go back</p>
@@ -431,7 +431,7 @@ function renderCreateCardForm(deck_id, callback) {
     <div id="controls">
         <div id="back" class="clickable">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">arrow_back_ios_new</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">arrow_back_ios_new</span>
             </div>
             <div>
                 <p>go back</p>
@@ -474,7 +474,7 @@ function renderEditCardViewFromList(deckId, cardData) {
     <div id="controls">
         <div id="back" class="clickable">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">arrow_back_ios_new</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">arrow_back_ios_new</span>
             </div>
             <div>
                 <p>go back</p>
@@ -498,7 +498,7 @@ function renderListView(deckData) {
     <div id="controls">
         <div id="back" class="clickable">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">arrow_back_ios_new</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">arrow_back_ios_new</span>
             </div>
             <div>
                 <p>go back</p>
@@ -506,7 +506,7 @@ function renderListView(deckData) {
         </div>
         <div id="add-new-card" class="clickable">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">add</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">add</span>
             </div>
             <div>
                 <p>add new card</p>
@@ -543,10 +543,10 @@ function renderListView(deckData) {
 			<div class="table-cell small">${getEta(card.date)}</div>
             <div style="display: flex;">
                 <div class="edit-card clickable">
-                    <span class="material-symbols-outlined size-48" style="font-size:24px;">edit</span>
+                    <span class="material-symbols-outlined size-48 symbol-small">edit</span>
                 </div>
                 <div class="delete-card clickable">
-                    <span class="material-symbols-outlined size-48" style="font-size:24px;">delete</span>
+                    <span class="material-symbols-outlined size-48 symbol-small">delete</span>
                 </div>
             </div>`;
         row.innerHTML = cells;
@@ -650,7 +650,7 @@ function renderCardsLearningPage(currentDeck) {
     <div id="controls">
         <div id="back" class="clickable">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">arrow_back_ios_new</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">arrow_back_ios_new</span>
             </div>
             <div>
                 <p>sync and go back</p>
@@ -658,7 +658,7 @@ function renderCardsLearningPage(currentDeck) {
         </div>
         <div id="edit-card" class="clickable">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">edit</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">edit</span>
             </div>
             <div>
                 <p>edit card</p>
@@ -666,7 +666,7 @@ function renderCardsLearningPage(currentDeck) {
         </div>
         <div id="add-new-card" class="clickable">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">add</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">add</span>
             </div>
             <div>
                 <p>add new card</p>
@@ -674,7 +674,7 @@ function renderCardsLearningPage(currentDeck) {
         </div>
         <div id="remove-card" class="clickable">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">delete</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">delete</span>
             </div> 
             <div>
                 <p>remove card</p>
@@ -686,7 +686,7 @@ function renderCardsLearningPage(currentDeck) {
     <div id="buttons-div" class="prevent-select">
         <div id="show-answer" class="clickable" style="display: block;">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">visibility</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">visibility</span>
             </div>
             <div>
                 <p class="learning-button">show answer</p>
@@ -694,7 +694,7 @@ function renderCardsLearningPage(currentDeck) {
         </div>
         <div id="wrong-answer" class="clickable" style="display: none;">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">close</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">close</span>
             </div>
             <div>
                 <p class="learning-button">wrong answer</p>
@@ -702,7 +702,7 @@ function renderCardsLearningPage(currentDeck) {
         </div>
         <div id="correct-answer" class="clickable" style="display: none;">
             <div>
-                <span class="material-symbols-outlined size-48" style="font-size:36px;">check</span>
+                <span class="material-symbols-outlined size-48 symbol-medium">check</span>
             </div>
             <div>
                 <p class="learning-button" id="correct-button-text"></p>
@@ -808,7 +808,7 @@ function loadDarkThemeButton() {
     newThemeControlDiv.setAttribute("class", "clickable");
     newThemeControlDiv.innerHTML = `
         <div>
-            <span class="material-symbols-outlined size-48" style="font-size:36px;">dark_mode</span>
+            <span class="material-symbols-outlined size-48 symbol-medium">dark_mode</span>
         </div>
         <div>
             dark
@@ -828,7 +828,7 @@ function loadLightThemeButton() {
     newThemeControlDiv.setAttribute("class", "clickable");
     newThemeControlDiv.innerHTML = `
         <div>
-            <span class="material-symbols-outlined size-48" style="font-size:36px;">light_mode</span>
+            <span class="material-symbols-outlined size-48 symbol-medium">light_mode</span>
         </div>
         <div>
             light
@@ -849,7 +849,7 @@ function createUserControlButton(action, callback) {
     userControl.innerHTML = `
     <div class="clickable">
         <div>
-            <span class="material-symbols-outlined size-48" style="font-size:36px;">${symbolName}</span>
+            <span class="material-symbols-outlined size-48 symbol-medium">${symbolName}</span>
         </div>
         <div>
             ${action}

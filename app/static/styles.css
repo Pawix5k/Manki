@@ -42,6 +42,18 @@ footer {
     /* background-color: rgba(255, 0, 0, 0.2); */
 }
 
+.symbol-big {
+  font-size: 3em;
+}
+
+.symbol-medium {
+  font-size: 2.25em;
+}
+
+.symbol-small {
+  font-size: 1.5em;
+}
+
 .info {
     display: flex;
     align-items: center;
@@ -313,6 +325,7 @@ p.learning-button {
   padding-top: 50px;
   grid-column: 1 / span 1;
   display: block;
+  font-size: 0.86em;
 }
 
 #edit-card,
