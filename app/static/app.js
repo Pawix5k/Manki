@@ -113,6 +113,10 @@ async function getUserDecks() {
         let data = await response.json();
         return data;
     }
+    if (response.status == 401) {
+        loadLoginPage();
+        return
+    }
     const msg = await response.json();
     openMessageDialog(msg.detail);
 }
