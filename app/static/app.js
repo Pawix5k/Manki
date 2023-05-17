@@ -350,15 +350,9 @@ function createDeckContainer(deckData) {
     });
 
     let deleteDiv = deckContainer.getElementsByClassName("delete")[0];
-    deleteDiv.addEventListener("click", function (e) {
+    deleteDiv.addEventListener("click", async function (e) {
         e.preventDefault();
-        const callback = async () => {
-            e.preventDefault();
-            enableModal();
-            await deleteDeck(deckData._id);
-            disableModal();
-            loadHomePage();}
-        renderConfirmDeleteDialog("Confirm delete deck", callback);
+        await manageDeleteDeck(deckData._id);
     });
 
     let listDiv = deckContainer.getElementsByClassName("list")[0];
@@ -562,14 +556,8 @@ function renderListView(deckData) {
         });
 
         let deleteCardDiv = row.getElementsByClassName("delete-card")[0];
-        deleteCardDiv.addEventListener("click", function (e) {
-            const callback = async () => {
-                enableModal();
-                await deleteCard(card._id);
-                disableModal();
-                loadListView(deckData._id);
-            };
-            renderConfirmDeleteDialog("confirm delete card", callback);
+        deleteCardDiv.addEventListener("click", async function (e) {
+            await manageDeleteCardFromListView(card._id, deckData._id);
         });
         table.appendChild(row);
     }
@@ -738,15 +726,7 @@ function renderCardsLearningPage(currentDeck) {
 
     let deleteCardButton = document.getElementById("remove-card");
     deleteCardButton.addEventListener("click", function(e) {
-        if (!currentDeck.isQueueEmpty()) {
-            let topCard = currentDeck.getTopCard();
-            const callback = async () => {
-                await sendDeckUpdates(currentDeck.buildDeckUpdateRequestBody());
-                await deleteCard(topCard._id);
-                loadCardsLearningPage(currentDeck.deck._id);
-            }
-            renderConfirmDeleteDialog("confirm delete card", callback);
-        }
+        manageDeleteCardFromLearningView(currentDeck);
     });
 
     let addNewCardButton = document.getElementById("add-new-card");
@@ -973,6 +953,42 @@ async function manageUpdateCardFromListView(form, cardData, deckId) {
     disableModal();
     if (response) {
         loadListView(deckId);
+    }
+}
+
+async function manageDeleteDeck(deckId) {
+    const callback = async () => {
+        enableModal();
+        await deleteDeck(deckId);
+        disableModal();
+        loadHomePage();}
+    renderConfirmDeleteDialog("confirm delete deck", callback);
+}
+
+
+async function manageDeleteCardFromListView(cardId, deckId) {
+    const callback = async () => {
+        enableModal();
+        let response = await deleteCard(cardId);
+        disableModal();
+        if (response) {
+            loadListView(deckId);
+        }
+    };
+    renderConfirmDeleteDialog("confirm delete card", callback);
+}
+
+async function manageDeleteCardFromLearningView(currentDeck) {
+    if (!currentDeck.isQueueEmpty()) {
+        let topCard = currentDeck.getTopCard();
+        const callback = async () => {
+            enableModal();
+            await sendDeckUpdates(currentDeck.buildDeckUpdateRequestBody());
+            await deleteCard(topCard._id);
+            disableModal();
+            loadCardsLearningPage(currentDeck.deck._id);
+        }
+        renderConfirmDeleteDialog("confirm delete card", callback);
     }
 }
 
