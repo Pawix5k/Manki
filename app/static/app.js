@@ -154,52 +154,49 @@ function sendLoginRequest() {
         });
 }
 
-async function sendRegisterRequest() {
-    var formElement = document.getElementById('register-form');
-    var data = new FormData(formElement);
+async function sendRegisterRequest(formData) {
     var req = {
         method: "POST",
-        body: data,
+        body: formData,
     }
-    let response = await fetch(rootUrl + 'user', req)
-    loadLoginPage();
+    const response = await fetch(rootUrl + 'user', req)
+    if (response.ok) {
+        return response
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
 async function sendLogoutRequest() {
     var req = {
         method: "POST"
     }
-    response = await fetch(rootUrl + 'logout', req);
-    // data = await response.json();
-    return response
+    const response = await fetch(rootUrl + 'logout', req);
+    if (response.ok) {
+        return response
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
-async function sendCreateDeckRequest() {
-    var deckName = document.getElementById('deck-name-field').value;
-    var data = {name: deckName}
-    data = JSON.stringify(data);
+async function sendCreateDeckRequest(requestBody) {
     var req = {
         method: "POST",
         headers: {
             'Accept': 'application/json',
-            // 'Content-Type': 'application/json'
+            'Content-Type': 'application/json'
         },
-        body: data,
+        body: requestBody,
     }
-
     const response = await fetch(rootUrl + 'decks', req);
-    // data = await response.json();
-    // let newDecks = {}
-    // data.decks.forEach(deck => {
-    //     newDecks[deck._id] = deck;
-    // });
-    // decks = newDecks;
-    // console.log(data);
-    loadHomePage();
+    if (response.ok) {
+        return response
+    }
+    const msg = await response.json();
+    openMessageDialog(msg.detail);
 }
 
 async function sendCreateCardRequest(deck_id, requestBody) {
-    console.log(requestBody);
     var req = {
         method: "POST",
         headers: {
@@ -315,11 +312,13 @@ function createRegisterForm() {
     </form>`;
 
     appContainer.innerHTML = registerFormTemplate;
-    document.getElementById("register-form").addEventListener("submit", function (e) {
+    let form = document.getElementById("register-form");
+    document.getElementById("register-form").addEventListener("submit", async function (e) {
         e.preventDefault();
-        enableModal();
-        sendRegisterRequest();
-        disableModal();
+        await manageRegisterRequest(form);
+        // enableModal();
+        // sendRegisterRequest();
+        // disableModal();
     });
 }
 
@@ -462,7 +461,7 @@ function renderCreateDeckForm() {
     let createDeckForm = document.getElementById("create-deck-form");
     createDeckForm.addEventListener("submit", async function (e) {
         e.preventDefault();
-        sendCreateDeckRequest();
+        await manageCreateDeck(createDeckForm);
     });
 }
 
@@ -956,17 +955,17 @@ function createUserControlButton(action, callback) {
     });
 }
 
-const login = async () => {
+const manageLogin = async () => {
     console.log("login");
     loadLoginPage();
 }
 
-const register = () => {
+const manageRegister = () => {
     console.log("register");
     loadRegisterPage();
 }
 
-const logout = async () => {
+const manageLogout = async () => {
     console.log("logout");
     await sendLogoutRequest();
     loadLoginPage();
@@ -1002,9 +1001,26 @@ async function manageCreateCard(deck_id, createCardForm) {
     }
 }
 
+async function manageCreateDeck(createDeckForm) {
+    let requestBody = JSONFromFormData(createDeckForm);
+    console.log(requestBody);
+    enableModal();
+    await sendCreateDeckRequest(requestBody);
+    disableModal();
+    loadHomePage();
+}
+
+async function manageRegisterRequest(form) {
+    let formData = new FormData(form);
+    enableModal();
+    await sendRegisterRequest(formData);
+    disableModal();
+    loadLoginPage();
+}
+
 async function loadHomePage() {
     console.log("attempting to load decks");
-    createUserControlButton("logout", logout);
+    createUserControlButton("logout", manageLogout);
     enableModal();
     decks = await getUserDecks();
     disableModal();
@@ -1016,7 +1032,7 @@ async function loadHomePage() {
 function loadLoginPage() {
     // enableModal();
     console.log("attempting to load login page");
-    createUserControlButton("register", register);
+    createUserControlButton("register", manageRegister);
     createLoginForm();
     // disableModal();
 }
@@ -1024,7 +1040,7 @@ function loadLoginPage() {
 function loadRegisterPage() {
     // enableModal();
     console.log("attempting to load login page");
-    createUserControlButton("login", login);
+    createUserControlButton("login", manageLogin);
     createRegisterForm();
     // disableModal();
 }
