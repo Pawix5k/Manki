@@ -128,5 +128,5 @@ def get_sample_deck() -> Deck:
         Card(question="pulverize", answer="sproszkować"),
         Card(question="prevarication", answer="krętactwo"),
     ]
-    sample_deck = Deck(name= "Sample Deck 🇬🇧-🇵🇱", cards=sample_cards)
+    sample_deck = Deck(name= "🇬🇧-🇵🇱 sample", cards=sample_cards)
     return sample_deck
