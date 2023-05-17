@@ -52,11 +52,7 @@ class CurrentDeck {
     buildCardsToLearn() {
         var cards = new CardsQueue;
         const now = Date.now();
-        this.deck.cards.forEach(card => {
-            if (Date.parse(card.date) < now) {
-                cards.enqueue(card);
-            }
-        });
+        this.deck.cards.filter((card) => Date.parse(card.date) < now).forEach((card) => {cards.enqueue(card)});
         return cards
     }
 
