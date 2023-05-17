@@ -419,8 +419,13 @@ dialog#waiting-modal>img {
   opacity: 0.6;
 }
 
-dialog#confirm-delete-dialog {
+dialog#message-dialog {
   position: fixed;
+}
+
+.dark-mode * dialog#message-dialog {
+  background-color: inherit;
+  color: inherit;
 }
 
 .clickable {
@@ -445,6 +450,7 @@ dialog#confirm-delete-dialog {
   border-bottom: 2px solid #bbb;
   margin: 20px;
   background-color: inherit;
+  color: inherit;
 }
 
 input:focus {
