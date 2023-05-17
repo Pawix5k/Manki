@@ -566,6 +566,8 @@ function renderListView(deckData) {
 
 // ================ CARD LEARNING ================
 
+// HERE WE GO
+
 function renderEditCardViewFromLearning(currentDeck) {
     let currentCard = currentDeck.getTopCard();
     let oldQuestion = currentCard.question;
@@ -585,10 +587,9 @@ function renderEditCardViewFromLearning(currentDeck) {
         let newAnswer = document.getElementById("card-answer-field").value;
         currentCard.question = newQuestion;
         currentCard.answer = newAnswer;
+        currentDeck.updates[currentCard._id] = currentCard;
         renderCardsLearningPage(currentDeck);
     });
-
-
 }
 
 function createCardDiv(question, answer, showAnswer=false) {
@@ -712,9 +713,11 @@ function renderCardsLearningPage(currentDeck) {
     </div>`;
     appContainer.innerHTML = cardsLearningPageTemplate;
 
+    // HERE WE GO
+
     let backButton = document.getElementById("back");
-    backButton.addEventListener("click", function(e) {
-            loadHomePage();
+    backButton.addEventListener("click", async function(e) {
+        await manageBackFromLearningView(currentDeck);
     });
 
     let editCardButton = document.getElementById("edit-card");
@@ -990,6 +993,14 @@ async function manageDeleteCardFromLearningView(currentDeck) {
         }
         renderConfirmDeleteDialog("confirm delete card", callback);
     }
+}
+// HERE WE GO
+async function manageBackFromLearningView(currentDeck) {
+    let requestBody = currentDeck.buildDeckUpdateRequestBody();
+    enableModal();
+    await sendDeckUpdates(requestBody);
+    disableModal();
+    loadHomePage();
 }
 
 async function loadHomePage() {
