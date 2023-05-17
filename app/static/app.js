@@ -261,8 +261,8 @@ function createLoginForm() {
 
     let loginFormTemplate = `
     <form id="login-form">
-        <input type="text" name="username" id="username-field" class="login-form-field" placeholder="Username">
-        <input type="password" name="password" id="password-field" class="login-form-field" placeholder="Password">
+        <input type="text" name="username" id="username-field" class="login-form-field" placeholder="Username" maxlength="20">
+        <input type="password" name="password" id="password-field" class="login-form-field" placeholder="Password" maxlength="20">
         <input type="submit" value="Login" id="login-form-submit">
     </form>`;
 
@@ -278,9 +278,9 @@ function createRegisterForm() {
 
     let registerFormTemplate = `
     <form id="register-form">
-        <input type="text" name="client_secret" id="invite-code-field" class="register-form-field" placeholder="Invite code">
-        <input type="text" name="username" id="username-field" class="register-form-field" placeholder="Username">
-        <input type="password" name="password" id="password-field" class="register-form-field" placeholder="Password">
+        <input type="text" name="client_secret" id="invite-code-field" class="register-form-field" placeholder="Invite code" maxlength="64">
+        <input type="text" name="username" id="username-field" class="register-form-field" placeholder="Username" maxlength="20">
+        <input type="password" name="password" id="password-field" class="register-form-field" placeholder="Password" maxlength="20">
         <input type="submit" value="Register" id="login-form-submit">
     </form>`;
 
@@ -409,7 +409,7 @@ function renderCreateDeckForm() {
         </div>
     </div>
     <form id="create-deck-form">
-        <input type="text" name="name" id="deck-name-field" placeholder="name" class="create-deck-form-field">
+        <input type="text" name="name" id="deck-name-field" placeholder="name" class="create-deck-form-field" maxlength="64">
         <input type="submit" value="create new deck" id="create-new-deck-form-submit">
     </form>`;
 
@@ -439,8 +439,8 @@ function renderCreateCardForm(deck_id, callback) {
         </div>
     </div>
     <form id="create-card-form">
-        <input type="text" name="question" id="card-question-field" placeholder="question">
-        <input type="text" name="answer" id="card-answer-field" placeholder="answer">
+        <input type="text" name="question" id="card-question-field" placeholder="question" maxlength="64">
+        <input type="text" name="answer" id="card-answer-field" placeholder="answer" maxlength="64">
         <input type="submit" value="Create new card" id="create-new-card-form-submit">
     </form>`;
 
@@ -482,8 +482,8 @@ function renderEditCardViewFromList(deckId, cardData) {
         </div>
     </div>
     <form id="edit-card-form">
-        <input type="text" name="question" id="card-question-field" placeholder="question" value="${oldQuestion}">
-        <input type="text" name="answer" id="card-answer-field" placeholder="answer" value="${oldAnswer}">
+        <input type="text" name="question" id="card-question-field" placeholder="question" value="${oldQuestion}" maxlength="64">
+        <input type="text" name="answer" id="card-answer-field" placeholder="answer" value="${oldAnswer}" maxlength="64">
         <input type="submit" value="Edit card" id="edit-card-form-submit">
     </form>`;
 
@@ -572,8 +572,8 @@ function renderEditCardViewFromLearning(currentDeck) {
     let oldAnswer = currentCard.answer;
     let editCardView = `
     <form id="edit-card-form">
-        <input type="text" name="question" id="card-question-field" placeholder="question" value="${oldQuestion}">
-        <input type="text" name="answer" id="card-answer-field" placeholder="answer" value="${oldAnswer}">
+        <input type="text" name="question" id="card-question-field" placeholder="question" value="${oldQuestion}" maxlength="64">
+        <input type="text" name="answer" id="card-answer-field" placeholder="answer" value="${oldAnswer}" maxlength="64">
         <input type="submit" value="Edit card" id="edit-card-form-submit">
     </form>`;
 
