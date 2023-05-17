@@ -566,8 +566,6 @@ function renderListView(deckData) {
 
 // ================ CARD LEARNING ================
 
-// HERE WE GO
-
 function renderEditCardViewFromLearning(currentDeck) {
     let currentCard = currentDeck.getTopCard();
     let oldQuestion = currentCard.question;
@@ -712,8 +710,6 @@ function renderCardsLearningPage(currentDeck) {
         </div>
     </div>`;
     appContainer.innerHTML = cardsLearningPageTemplate;
-
-    // HERE WE GO
 
     let backButton = document.getElementById("back");
     backButton.addEventListener("click", async function(e) {
@@ -994,7 +990,7 @@ async function manageDeleteCardFromLearningView(currentDeck) {
         renderConfirmDeleteDialog("confirm delete card", callback);
     }
 }
-// HERE WE GO
+
 async function manageBackFromLearningView(currentDeck) {
     let requestBody = currentDeck.buildDeckUpdateRequestBody();
     enableModal();
