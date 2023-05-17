@@ -290,11 +290,11 @@ p.learning-button {
   z-index: 5;
   }
   50% {
-      transform: translate(120%) scale(90%);
+      transform: translate(120%, -5%) scale(90%);
       z-index: -1;
   }
   100% {
-      transform: scale(80%);
+      transform: translateY(-5%) scale(80%);
   }
 }
 
