@@ -65,7 +65,7 @@ footer {
     grid-column: 2 / span 1;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows:auto 1fr; /* sucks with forms */
+    grid-auto-rows: min-content;
 }
 
 .deck-container {
