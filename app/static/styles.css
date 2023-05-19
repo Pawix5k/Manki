@@ -360,16 +360,24 @@ dialog#waiting-modal>img {
 }
 
 dialog#message-dialog {
+  width: 40%;
+  text-align: center;
   position: fixed;
 }
 
 .dark-mode * dialog#message-dialog {
-  background-color: inherit;
+  background-color: rgb(20, 20, 20);
   color: inherit;
 }
 
 .clickable {
   cursor: pointer;
+}
+
+.dialog-buttons {
+  font-size: 1.6em;
+  display: flex;
+  justify-content: space-around;
 }
 
 form {

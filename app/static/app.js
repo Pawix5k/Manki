@@ -295,16 +295,20 @@ function createRegisterForm() {
     });
 }
 
+// HERE
 function renderConfirmDeleteDialog(msg, callback) {
     let confirmDeleteDialog = document.getElementById("message-dialog");
     confirmDeleteDialog.showModal();
 
     dialogTemplate = `
     <h2>${msg}</h2>
-    <div>
-        <button id="close-dialog">back</button><button id="confirm-dialog">
+    <div class="dialog-buttons">
+        <div class="clickable" id="close-dialog">
+            back
+        </div>
+        <div class="clickable" id="confirm-dialog">
             confirm
-        </button>
+        </div>
     </div>`;
 
     confirmDeleteDialog.innerHTML = dialogTemplate;
@@ -804,7 +808,6 @@ function renderCardsLearningPage(currentDeck) {
         showAnswer.style.display = "block";
         refreshCardsLearningVariables(currentDeck);
     });
-
     refreshCardsLearningVariables(currentDeck);
 }
 
@@ -1064,12 +1067,16 @@ async function loadListView(deckId) {
     renderListView(deckData);
 }
 
+
+// HERE
 function openMessageDialog(msg) {
     let dialog = document.getElementById("message-dialog");
     dialog.innerHTML = `
     <h2>${msg}</h2>
-    <div>
-        <button id="close-dialog">back</button>
+    <div class="dialog-buttons">
+        <div class="clickable" id="close-dialog">
+            back
+        </div>
     </div>`;
     let closeDialog = document.getElementById("close-dialog");
     closeDialog.addEventListener("click", function(e) {
