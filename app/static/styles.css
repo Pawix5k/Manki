@@ -55,7 +55,6 @@ footer {
 .info {
   display: flex;
   align-items: center;
-
 }
 
 #app-container {
@@ -262,13 +261,11 @@ p.learning-button {
   }
 }
 
+
 .prevent-select {
   -webkit-user-select: none;
-  /* Safari */
   -ms-user-select: none;
-  /* IE 10 and IE 11 */
   user-select: none;
-  /* Standard syntax */
 }
 
 #controls {
@@ -407,7 +404,12 @@ input:focus {
   color: white;
 }
 
-@media screen and (max-aspect-ratio: 1) {
+.dark-mode {
+  background-color: rgb(20, 20, 20);
+  color: rgb(240, 240, 240);
+}
+
+@media screen and (max-aspect-ratio: 1 / 1) {
   .deck-container {
     grid-column: span 3;
   }
@@ -437,7 +439,8 @@ input:focus {
   }
 }
 
-.dark-mode {
-  background-color: rgb(20, 20, 20);
-  color: rgb(240, 240, 240);
+@media screen and (max-width: 750px) {
+  body {
+    font-size: 0.5em;
+  }
 }
