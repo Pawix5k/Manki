@@ -447,12 +447,24 @@ input:focus {
   .div-table {
     grid-column: 2 / span 5;
   }
+
+  #controls {
+    font-size: 1.2em;
+  }
+  
+  .deck-bottom {
+    font-size: 1.4em;
+  }
 }
 
 @media screen and (max-width: 1200px) {
   body {
     font-size: 0.8em;
   }
+
+  /* .material-symbols-outlined {
+    font-size: 1.2em;
+  } */
 }
 
 @media screen and (max-width: 900px) {

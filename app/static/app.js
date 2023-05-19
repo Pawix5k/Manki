@@ -547,10 +547,10 @@ function renderListView(deckData) {
 			<div class="table-cell small">${getEta(card.date)}</div>
             <div style="display: flex;">
                 <div class="edit-card clickable">
-                    <span class="material-symbols-outlined size-48 symbol-small">edit</span>
+                    <span class="material-symbols-outlined size-48 symbol-medium">edit</span>
                 </div>
                 <div class="delete-card clickable">
-                    <span class="material-symbols-outlined size-48 symbol-small">delete</span>
+                    <span class="material-symbols-outlined size-48 symbol-medium">delete</span>
                 </div>
             </div>`;
         row.innerHTML = cells;
