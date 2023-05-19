@@ -295,6 +295,8 @@ p.learning-button {
   grid-column: 2 / span 4;
   align-self: start;
   border-left: 2px solid #bbb;
+  margin-right: 2em;
+  font-size: 1.6em;
 }
 
 .table-row {
@@ -370,7 +372,7 @@ dialog#message-dialog {
   cursor: pointer;
 }
 
-#app-container>form {
+form {
   grid-column: 3 / span 2;
   text-align: center;
   display: grid;
@@ -436,6 +438,14 @@ input:focus {
 
   #app-container {
     grid-column: 1 / span 3;
+  }
+
+  form {
+    grid-column: 2 / span 4;
+  }
+
+  .div-table {
+    grid-column: 2 / span 5;
   }
 }
 
