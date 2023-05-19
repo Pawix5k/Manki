@@ -491,6 +491,11 @@ function renderEditCardViewFromList(deckId, cardData) {
         <input type="submit" value="save" id="edit-card-form-submit">
     </form>`;
 
+    document.getElementById("back").addEventListener("click", async function (e) {
+        e.preventDefault();
+        await loadListView(deckId);
+    });
+
     document.getElementById("edit-card-form").addEventListener("submit", async function (e) {
         e.preventDefault();
         await manageUpdateCardFromListView(this, cardData, deckId);
@@ -805,6 +810,7 @@ function renderCardsLearningPage(currentDeck) {
 
 // ================ END CARD LEARNING ================
 function loadDarkThemeButton() {
+    localStorage.setItem("mode", "light");
     turnOffDarkMode();
     let themeControlDiv = document.getElementById("theme-control");
     let newThemeControlDiv = document.createElement("div");
@@ -825,6 +831,7 @@ function loadDarkThemeButton() {
 }
 
 function loadLightThemeButton() {
+    localStorage.setItem("mode", "dark");
     turnOnDarkMode();
     let themeControlDiv = document.getElementById("theme-control");
     let newThemeControlDiv = document.createElement("div");
@@ -1072,8 +1079,15 @@ function openMessageDialog(msg) {
     dialog.showModal();
 }
 
-var appContainer = document.getElementById("app-container");
-var decks = undefined;
+function initialize() {
+    if (localStorage.getItem("mode") == "dark") {
+        loadLightThemeButton();
+    }
+    else {
+        loadDarkThemeButton();
+    }
+    loadHomePage();
+}
 
-loadDarkThemeButton();
-loadHomePage();
+var appContainer = document.getElementById("app-container");
+initialize();
