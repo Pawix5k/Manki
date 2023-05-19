@@ -108,7 +108,7 @@ class CurrentDeck {
 }
 
 async function getUserDecks() {
-    const response = await fetch(rootUrl + "decks");
+    const response = await fetch("decks");
     if (response.ok) {
         let data = await response.json();
         return data;
@@ -126,7 +126,7 @@ async function sendLoginRequest(formData) {
         method: "POST",
         body: formData,
     }
-    const response = await fetch(rootUrl + 'token', req)
+    const response = await fetch('token', req)
     if (response.ok) {
         return response
     }
@@ -139,7 +139,7 @@ async function sendRegisterRequest(formData) {
         method: "POST",
         body: formData,
     }
-    const response = await fetch(rootUrl + 'user', req)
+    const response = await fetch('user', req)
     if (response.ok) {
         return response
     }
@@ -151,7 +151,7 @@ async function sendLogoutRequest() {
     var req = {
         method: "POST"
     }
-    const response = await fetch(rootUrl + 'logout', req);
+    const response = await fetch('logout', req);
     if (response.ok) {
         return response
     }
@@ -168,7 +168,7 @@ async function sendCreateDeckRequest(requestBody) {
         },
         body: requestBody,
     }
-    const response = await fetch(rootUrl + 'decks', req);
+    const response = await fetch('decks', req);
     if (response.ok) {
         return response
     }
@@ -185,7 +185,7 @@ async function sendCreateCardRequest(deck_id, requestBody) {
         },
         body: requestBody,
     }
-    const response = await fetch(rootUrl + 'cards/' + deck_id, req);
+    const response = await fetch('cards/' + deck_id, req);
     if (response.ok) {
         return response
     }
@@ -201,7 +201,7 @@ async function getDeck(deck_id) {
             'Content-Type': 'application/json'
         }
     }
-    const response = await fetch(rootUrl + "decks/" + deck_id, req);
+    const response = await fetch("decks/" + deck_id, req);
     if (response.ok) {
         const deckData = await response.json();
         return deckData
@@ -219,7 +219,7 @@ async function sendDeckUpdates(updates) {
         },
         body: updates,
     }
-    const response = await fetch(rootUrl + 'decks', req);
+    const response = await fetch('decks', req);
     if (response.ok) {
         return response
     }
@@ -235,7 +235,7 @@ async function deleteDeck(deck_id) {
             'Content-Type': 'application/json'
         }
     }
-    const response = await fetch(rootUrl + 'decks/' + deck_id, req);
+    const response = await fetch('decks/' + deck_id, req);
     if (response.ok) {
         return response
     }
@@ -251,7 +251,7 @@ async function deleteCard(card_id) {
             'Content-Type': 'application/json'
         }
     }
-    const response = await fetch(rootUrl + 'cards/' + card_id, req);
+    const response = await fetch('cards/' + card_id, req);
     if (response.ok) {
         return response
     }
@@ -1073,7 +1073,6 @@ function openMessageDialog(msg) {
 }
 
 var appContainer = document.getElementById("app-container");
-let rootUrl = "http://127.0.0.1:8000/";
 var decks = undefined;
 
 loadDarkThemeButton();
