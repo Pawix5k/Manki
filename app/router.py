@@ -144,10 +144,8 @@ async def update_cards(user_id: Annotated[str, Depends(get_current_user)], updat
     to_set, array_filters = update_dicts
     filter_ = {"_id": user_id}
     update = {"$set": to_set}
-    result = await db["users"].update_one(filter_, update, array_filters=array_filters)
-    if result.modified_count == 1:
-        return Response(status_code=204)
-    raise HTTPException(status_code=404, detail=f"Something went wrong")
+    await db["users"].update_one(filter_, update, array_filters=array_filters)
+    return Response(status_code=204)
 
 
 @router.delete("/cards/{card_id}")

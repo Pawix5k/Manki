@@ -295,16 +295,20 @@ function createRegisterForm() {
     });
 }
 
+// HERE
 function renderConfirmDeleteDialog(msg, callback) {
     let confirmDeleteDialog = document.getElementById("message-dialog");
     confirmDeleteDialog.showModal();
 
     dialogTemplate = `
     <h2>${msg}</h2>
-    <div>
-        <button id="close-dialog">back</button><button id="confirm-dialog">
+    <div class="dialog-buttons">
+        <div class="clickable" id="close-dialog">
+            back
+        </div>
+        <div class="clickable" id="confirm-dialog">
             confirm
-        </button>
+        </div>
     </div>`;
 
     confirmDeleteDialog.innerHTML = dialogTemplate;
@@ -491,6 +495,11 @@ function renderEditCardViewFromList(deckId, cardData) {
         <input type="submit" value="save" id="edit-card-form-submit">
     </form>`;
 
+    document.getElementById("back").addEventListener("click", async function (e) {
+        e.preventDefault();
+        await loadListView(deckId);
+    });
+
     document.getElementById("edit-card-form").addEventListener("submit", async function (e) {
         e.preventDefault();
         await manageUpdateCardFromListView(this, cardData, deckId);
@@ -547,10 +556,10 @@ function renderListView(deckData) {
 			<div class="table-cell small">${getEta(card.date)}</div>
             <div style="display: flex;">
                 <div class="edit-card clickable">
-                    <span class="material-symbols-outlined size-48 symbol-small">edit</span>
+                    <span class="material-symbols-outlined size-48 symbol-medium">edit</span>
                 </div>
                 <div class="delete-card clickable">
-                    <span class="material-symbols-outlined size-48 symbol-small">delete</span>
+                    <span class="material-symbols-outlined size-48 symbol-medium">delete</span>
                 </div>
             </div>`;
         row.innerHTML = cells;
@@ -799,12 +808,12 @@ function renderCardsLearningPage(currentDeck) {
         showAnswer.style.display = "block";
         refreshCardsLearningVariables(currentDeck);
     });
-
     refreshCardsLearningVariables(currentDeck);
 }
 
 // ================ END CARD LEARNING ================
 function loadDarkThemeButton() {
+    localStorage.setItem("mode", "light");
     turnOffDarkMode();
     let themeControlDiv = document.getElementById("theme-control");
     let newThemeControlDiv = document.createElement("div");
@@ -825,6 +834,7 @@ function loadDarkThemeButton() {
 }
 
 function loadLightThemeButton() {
+    localStorage.setItem("mode", "dark");
     turnOnDarkMode();
     let themeControlDiv = document.getElementById("theme-control");
     let newThemeControlDiv = document.createElement("div");
@@ -1057,12 +1067,16 @@ async function loadListView(deckId) {
     renderListView(deckData);
 }
 
+
+// HERE
 function openMessageDialog(msg) {
     let dialog = document.getElementById("message-dialog");
     dialog.innerHTML = `
     <h2>${msg}</h2>
-    <div>
-        <button id="close-dialog">back</button>
+    <div class="dialog-buttons">
+        <div class="clickable" id="close-dialog">
+            back
+        </div>
     </div>`;
     let closeDialog = document.getElementById("close-dialog");
     closeDialog.addEventListener("click", function(e) {
@@ -1072,8 +1086,15 @@ function openMessageDialog(msg) {
     dialog.showModal();
 }
 
-var appContainer = document.getElementById("app-container");
-var decks = undefined;
+function initialize() {
+    if (localStorage.getItem("mode") == "dark") {
+        loadLightThemeButton();
+    }
+    else {
+        loadDarkThemeButton();
+    }
+    loadHomePage();
+}
 
-loadDarkThemeButton();
-loadHomePage();
+var appContainer = document.getElementById("app-container");
+initialize();
