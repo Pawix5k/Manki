@@ -1,6 +1,8 @@
+import os
 from datetime import datetime, timedelta
 from typing import Annotated, Optional
 
+from dotenv import load_dotenv
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
 from fastapi.security import OAuth2
@@ -9,9 +11,12 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 import motor.motor_asyncio
 
-from config import SECRET_KEY, ALGORITHM, MONGODB_URL
 from models import User, TokenData, CardUpdateRequests, Deck, Card
 
+load_dotenv()
+SECRET_KEY = os.environ["SECRET_KEY"]
+ALGORITHM = os.environ["ALGORITHM"]
+MONGODB_URL = os.environ["MONGODB_URL"]
 
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGODB_URL)
 db = client.manki_test
