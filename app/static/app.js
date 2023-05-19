@@ -267,7 +267,7 @@ function createLoginForm() {
     <form id="login-form">
         <input type="text" name="username" id="username-field" class="login-form-field" placeholder="Username" maxlength="20">
         <input type="password" name="password" id="password-field" class="login-form-field" placeholder="Password" maxlength="20">
-        <input type="submit" value="Login" id="login-form-submit">
+        <input type="submit" value="login" id="login-form-submit">
     </form>`;
 
     appContainer.innerHTML = loginFormTemplate;
@@ -285,7 +285,7 @@ function createRegisterForm() {
         <input type="text" name="client_secret" id="invite-code-field" class="register-form-field" placeholder="Invite code" maxlength="64">
         <input type="text" name="username" id="username-field" class="register-form-field" placeholder="Username" maxlength="20">
         <input type="password" name="password" id="password-field" class="register-form-field" placeholder="Password" maxlength="20">
-        <input type="submit" value="Register" id="login-form-submit">
+        <input type="submit" value="register" id="login-form-submit">
     </form>`;
 
     appContainer.innerHTML = registerFormTemplate;
@@ -373,7 +373,7 @@ function createCreateDeckContainer() {
     <div class="deck new-deck">
         <div class="add-new-deck clickable">
             <div><span class="material-symbols-outlined size-48 symbol-big">add</span></div>
-            <div>Add new deck</div>
+            <div>add new deck</div>
         </div>
     </div>`;
 
@@ -414,7 +414,7 @@ function renderCreateDeckForm() {
     </div>
     <form id="create-deck-form">
         <input type="text" name="name" id="deck-name-field" placeholder="name" class="create-deck-form-field" maxlength="64">
-        <input type="submit" value="create new deck" id="create-new-deck-form-submit">
+        <input type="submit" value="add" id="create-new-deck-form-submit">
     </form>`;
 
     let backButton = document.getElementById("back");
@@ -445,7 +445,7 @@ function renderCreateCardForm(deck_id, callback) {
     <form id="create-card-form">
         <input type="text" name="question" id="card-question-field" placeholder="question" maxlength="64">
         <input type="text" name="answer" id="card-answer-field" placeholder="answer" maxlength="64">
-        <input type="submit" value="Create new card" id="create-new-card-form-submit">
+        <input type="submit" value="add" id="create-new-card-form-submit">
     </form>`;
 
     let backButton = document.getElementById("back");
@@ -488,7 +488,7 @@ function renderEditCardViewFromList(deckId, cardData) {
     <form id="edit-card-form">
         <input type="text" name="question" id="card-question-field" placeholder="question" value="${oldQuestion}" maxlength="64">
         <input type="text" name="answer" id="card-answer-field" placeholder="answer" value="${oldAnswer}" maxlength="64">
-        <input type="submit" value="Edit card" id="edit-card-form-submit">
+        <input type="submit" value="save" id="edit-card-form-submit">
     </form>`;
 
     document.getElementById("edit-card-form").addEventListener("submit", async function (e) {
@@ -578,7 +578,7 @@ function renderEditCardViewFromLearning(currentDeck) {
     <form id="edit-card-form">
         <input type="text" name="question" id="card-question-field" placeholder="question" value="${oldQuestion}" maxlength="64">
         <input type="text" name="answer" id="card-answer-field" placeholder="answer" value="${oldAnswer}" maxlength="64">
-        <input type="submit" value="Edit card" id="edit-card-form-submit">
+        <input type="submit" value="save" id="edit-card-form-submit">
     </form>`;
 
     appContainer.innerHTML = editCardView;
@@ -631,7 +631,7 @@ function loadCurrentCard(cur) {
         var currentCard = createCardDiv(cardData.question, cardData.answer);
     }
     else {
-        var currentCard = createCardDiv("<h1>🤓</h1>", "No cards left to study!", true);
+        var currentCard = createCardDiv("<h1>🤓</h1>", "no cards left to study (for now)!", true);
     }
     cardContainer.appendChild(currentCard);
 }
