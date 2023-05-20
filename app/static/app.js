@@ -743,7 +743,10 @@ function renderCardsLearningPage(currentDeck) {
 
     let addNewCardButton = document.getElementById("add-new-card");
     addNewCardButton.addEventListener("click", function(e) {
-            const callback = function() { return loadCardsLearningPage(currentDeck.deck._id); };
+            const callback = async function() {
+                await sendDeckUpdates(currentDeck.buildDeckUpdateRequestBody());
+                loadCardsLearningPage(currentDeck.deck._id);
+            };
             renderCreateCardForm(currentDeck.deck._id, callback);
     });
 
