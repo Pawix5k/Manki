@@ -6,7 +6,7 @@ It's a single page application with flashcards with Spaced Repetition System (SR
 
 ## How to use it?
 
-Create new decks, create new cards, edit them and delete them and above all, learn them. SRS algorithm role is to show you new and difficult to learn cards frequently, and gradually as you assimilate it, show it less and less frequent.
+Create new decks, create new cards, edit them and delete them and above all, learn them. SRS algorithm role is to show you new and difficult to learn cards frequently, and gradually as you assimilate the contents of the card, show it less and less frequent.
 
 ![Manki Diagram](img/dark-no-bg.png#gh-dark-mode-only)
 ![Manki Diagram](img/light-no-bg.png#gh-light-mode-only)
