@@ -13,7 +13,7 @@ Create new decks, create new cards, edit them and delete them and above all, lea
 
 ## How I built it?
 
-I made it with FastAPI and MongoDB on the backend. Each user is a single document with decks as embedded documents, and cards as documents embedded inside decks (I'm still unsure about this architecture).
+I made it with FastAPI and MongoDB on the backend. Authentication with JWT tokens. Each user is a single document with decks as embedded documents, and cards as documents embedded inside decks (I'm still unsure about this architecture).
 
 ```
 {
